@@ -37,24 +37,6 @@ export function DataModeSwitcher({
       >
         <span className={`dm-dot ${liveConfigured ? "ok" : "off"}`} /> Live
       </button>
-      <button
-        type="button"
-        className={`dm-pill ${mode === "mock" ? "active" : ""}`}
-        onClick={() => change("mock")}
-        disabled={pending}
-        title="Mock data (JSON seed files)"
-      >
-        <span className="dm-dot warn" /> Mock
-      </button>
-      <button
-        type="button"
-        className={`dm-pill ${mode === "empty" ? "active" : ""}`}
-        onClick={() => change("empty")}
-        disabled={pending}
-        title="Empty (preview UI with no data)"
-      >
-        <span className="dm-dot off" /> Empty
-      </button>
     </div>
   );
 }

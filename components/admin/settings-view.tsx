@@ -140,7 +140,7 @@ export function SettingsView({ ui, flags, integrations, dataMode, liveConfigured
               </div>
               <div className="panel section">
                 <h3>Data source</h3>
-                <p className="section-copy">Switch between Live (Supabase), Mock (seed JSON), and Empty (no data).</p>
+                <p className="section-copy">Data source is locked to Live (Supabase).</p>
                 <DataModeSwitcher mode={dataMode} liveConfigured={liveConfigured} />
               </div>
             </>

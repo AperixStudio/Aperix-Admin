@@ -7,14 +7,14 @@ const COOKIE = "aperix_data_mode";
 export async function getDataMode(): Promise<DataMode> {
   const c = await cookies();
   const v = c.get(COOKIE)?.value;
-  if (v === "live" || v === "mock" || v === "empty") return v;
-  // Default: mock so a fresh clone has something to look at.
-  return "mock";
+  if (v === "live") return v;
+  return "live";
 }
 
 export async function setDataMode(mode: DataMode): Promise<void> {
   const c = await cookies();
-  c.set(COOKIE, mode, { path: "/", maxAge: 60 * 60 * 24 * 365 });
+  const next = mode === "live" ? "live" : "live";
+  c.set(COOKIE, next, { path: "/", maxAge: 60 * 60 * 24 * 365 });
 }
 
 export function isLiveConfigured(): boolean {

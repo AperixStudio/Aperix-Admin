@@ -108,7 +108,7 @@ export function AppShell({
   clients = [],
   firstClientId,
   searchIndex = [],
-  dataMode = "mock",
+  dataMode = "live",
   liveConfigured = false,
   children,
 }: ShellProps) {
