@@ -1,0 +1,24 @@
+{
+  "brandKicker": "Aperix Internal",
+  "primaryNav": [
+    { "label": "Command Center", "href": "/", "key": "dashboard" },
+    { "label": "Clients", "href": "/clients", "key": "client" },
+    { "label": "Repos", "href": "/repos", "key": "repo" },
+    { "label": "New Client", "href": "/onboarding", "key": "onboarding" }
+  ],
+  "viewTitles": {
+    "dashboard": "Command Center",
+    "client": "Client Workspace",
+    "repo": "Repos",
+    "onboarding": "New Client",
+    "audit": "Audit Log",
+    "contracts": "Contracts",
+    "dependencies": "Dependencies",
+    "metrics": "Metrics",
+    "runbooks": "Runbooks",
+    "timeline": "Timeline",
+    "ai": "AI Query",
+    "settings": "Settings",
+    "notifications": "Notifications"
+  }
+}

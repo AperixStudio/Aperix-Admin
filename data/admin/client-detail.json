@@ -1,0 +1,25 @@
+{
+  "noteTitle": "Best practice",
+  "noteBody": "Store links to credential locations here, not actual passwords or raw API keys.",
+  "secondaryLabel": "Project Switcher",
+  "actions": [
+    { "label": "Back to Dashboard", "href": "/" },
+    { "label": "Repo Structure", "href": "/repos", "primary": true }
+  ],
+  "sections": {
+    "snapshot": "Project Snapshot",
+    "platform": "Platform & Hosting",
+    "links": "Quick Access Tiles",
+    "quickActions": "Quick Actions",
+    "checks": "Health & Checks",
+    "priorities": "Current Priorities",
+    "notes": "Internal Notes",
+    "deployments": "Deployment History",
+    "incidents": "Incidents & Notes",
+    "contacts": "Client Contacts",
+    "credentials": "Credentials & Access",
+    "tasks": "Open Tasks",
+    "future": "Future Enhancements"
+  },
+  "futureDescription": "In the real app, this page could automatically show GitHub branches, recent Netlify deploys, domain renewal dates, SSL expiry, form test status, and last-worked-on activity."
+}

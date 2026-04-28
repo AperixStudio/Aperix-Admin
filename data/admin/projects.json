@@ -1,0 +1,299 @@
+[
+  {
+    "id": "rhinos",
+    "name": "Rhino's Walk",
+    "domain": "rhinoswalk.com.au",
+    "stage": "Live",
+    "lead": "Harrison",
+    "support": "Thomas",
+    "tier": "Business",
+    "health": "Live · Healthy",
+    "healthState": "healthy",
+    "hosting": "Netlify",
+    "registrar": "VentraIP",
+    "dns": "Cloudflare",
+    "repo": "client-rhinos-walk-site",
+    "repoStatus": "Private",
+    "deploy": "Today · 11:42 AM",
+    "summary": "Production client website with active monitoring, domain routing, and post-launch maintenance.",
+    "notes": "Primary ops site. Good candidate for the first fully integrated health view with Netlify deploy status, uptime ping, and ownership notes.",
+    "liveUrl": "https://rhinoswalk.com.au",
+    "stagingUrl": "https://rhinoswalk-preview--rhinoswalk.netlify.app",
+    "repoUrl": "https://github.com/AperixStudio/client-rhinos-walk-site",
+    "githubOrg": "AperixStudio",
+    "netlifySite": "rhinoswalk",
+    "domainExpiry": "Mar 2027",
+    "sslExpiry": "Mar 2027",
+    "lastActivity": "Today · 11:42 AM",
+    "tags": ["live", "client", "business"],
+    "quickLinks": [
+      { "label": "Live Site", "url": "https://rhinoswalk.com.au", "category": "hosting" },
+      { "label": "GitHub", "url": "https://github.com/AperixStudio/client-rhinos-walk-site", "category": "repo" },
+      { "label": "Netlify", "url": "https://app.netlify.com/sites/rhinoswalk/overview", "category": "hosting" },
+      { "label": "Cloudflare", "url": "https://dash.cloudflare.com", "category": "dns" },
+      { "label": "VentraIP", "url": "https://ventraip.com.au/client-area", "category": "docs" }
+    ],
+    "links": [
+      { "title": "GitHub Repo", "description": "Private repo in AperixStudio" },
+      { "title": "Netlify Project", "description": "Deploys, env vars, previews" },
+      { "title": "Cloudflare Zone", "description": "DNS, SSL, email routing" },
+      { "title": "VentraIP", "description": "Registrar and renewal info" },
+      { "title": "Resend Domain", "description": "Contact-form sending setup" },
+      { "title": "Vault Entry", "description": "Passwords and service access" }
+    ],
+    "checks": [
+      { "label": "Homepage response", "result": "200 OK", "state": "healthy", "lastRun": "2 min ago" },
+      { "label": "SSL certificate", "result": "Valid · Mar 2027", "state": "healthy", "lastRun": "Today" },
+      { "label": "Contact form", "result": "Delivering", "state": "healthy", "lastRun": "Yesterday" },
+      { "label": "DNS routing", "result": "Healthy", "state": "healthy", "lastRun": "Today" }
+    ],
+    "priorities": [
+      { "title": "Monthly backup/export", "description": "Run content/export backup and note completion in the ops log." },
+      { "title": "Review Lighthouse baseline", "description": "Keep an eye on performance and CLS after future content edits." },
+      { "title": "Check renewals", "description": "Domain expires Mar 2027 — confirm renewal owner is documented." }
+    ],
+    "deployments": [
+      { "id": "rw-d1", "status": "success", "branch": "main", "message": "Update hero copy and add team photo", "timestamp": "Today · 11:42 AM", "duration": "1m 14s", "actor": "Harrison" },
+      { "id": "rw-d2", "status": "success", "branch": "main", "message": "Fix mobile nav spacing on iOS", "timestamp": "Yesterday · 4:20 PM", "duration": "58s", "actor": "Thomas" },
+      { "id": "rw-d3", "status": "success", "branch": "main", "message": "Add gallery section and contact form", "timestamp": "3 days ago · 10:05 AM", "duration": "1m 40s", "actor": "Harrison" },
+      { "id": "rw-d4", "status": "success", "branch": "main", "message": "Initial production launch", "timestamp": "5 days ago", "duration": "2m 02s", "actor": "Harrison" }
+    ],
+    "incidents": [],
+    "contacts": [
+      { "id": "rw-c1", "name": "Sam Whitford", "role": "Owner / Primary contact", "email": "sam@rhinoswalk.com.au", "phone": "+61 4xx xxx xxx", "notes": "Approves content updates and signs off on launches." },
+      { "id": "rw-c2", "name": "Lia Whitford", "role": "Operations", "email": "lia@rhinoswalk.com.au", "notes": "Handles bookings inbox; receives contact form leads." }
+    ],
+    "credentials": [
+      { "id": "rw-cr1", "label": "Netlify access", "location": "1Password · Aperix vault · Netlify item", "ownedBy": "Harrison" },
+      { "id": "rw-cr2", "label": "Cloudflare zone", "location": "1Password · Aperix vault · Cloudflare item", "ownedBy": "Harrison" },
+      { "id": "rw-cr3", "label": "Domain registrar", "location": "1Password · Aperix vault · VentraIP item", "ownedBy": "Harrison", "notes": "Renewal Mar 2027 — confirm payment method on file." }
+    ],
+    "tasks": [
+      { "id": "rw-t1", "title": "Run monthly content backup", "detail": "Export site content and store in client folder.", "owner": "Harrison", "status": "open", "due": "This week", "priority": "medium" },
+      { "id": "rw-t2", "title": "Confirm renewal owner is documented", "detail": "Domain expires Mar 2027.", "owner": "Harrison", "status": "open", "priority": "low" }
+    ]
+  },
+  {
+    "id": "aperix",
+    "name": "Aperix Website",
+    "domain": "aperix.com.au",
+    "stage": "Live",
+    "lead": "Harrison",
+    "support": "Thomas",
+    "tier": "Agency",
+    "health": "Live · Minor Attention",
+    "healthState": "attention",
+    "hosting": "Netlify",
+    "registrar": "VentraIP",
+    "dns": "Cloudflare",
+    "repo": "Aperix-Website",
+    "repoStatus": "Org Repo",
+    "deploy": "Yesterday · 8:10 PM",
+    "summary": "Public-facing agency site with demos, pricing, portfolio, and contact pipeline.",
+    "notes": "This stays separate from client work. Admin should sync leads from the public contact route and create internal project records when a lead becomes a job.",
+    "liveUrl": "https://aperix.com.au",
+    "repoUrl": "https://github.com/AperixStudio/Aperix-Website",
+    "githubOrg": "AperixStudio",
+    "netlifySite": "aperix-website",
+    "domainExpiry": "Aug 2027",
+    "sslExpiry": "Aug 2027",
+    "lastActivity": "Yesterday · 8:10 PM",
+    "tags": ["live", "agency", "internal"],
+    "quickLinks": [
+      { "label": "Live Site", "url": "https://aperix.com.au", "category": "hosting" },
+      { "label": "GitHub", "url": "https://github.com/AperixStudio/Aperix-Website", "category": "repo" },
+      { "label": "Netlify", "url": "https://app.netlify.com/sites/aperix-website/overview", "category": "hosting" },
+      { "label": "Cloudflare", "url": "https://dash.cloudflare.com", "category": "dns" },
+      { "label": "Resend", "url": "https://resend.com/domains", "category": "email" }
+    ],
+    "links": [
+      { "title": "GitHub Repo", "description": "AperixStudio/Aperix-Website" },
+      { "title": "Netlify Project", "description": "Production hosting dashboard" },
+      { "title": "Cloudflare Zone", "description": "DNS and forwarding" },
+      { "title": "Resend", "description": "Contact email delivery" },
+      { "title": "PRD / Docs", "description": "Source-of-truth planning docs" },
+      { "title": "Analytics", "description": "Traffic and conversion insights" }
+    ],
+    "checks": [
+      { "label": "Homepage response", "result": "200 OK", "state": "healthy", "lastRun": "3 min ago" },
+      { "label": "SSL certificate", "result": "Valid · Aug 2027", "state": "healthy", "lastRun": "Today" },
+      { "label": "Contact env audit", "result": "Reminder", "state": "attention", "lastRun": "Yesterday" },
+      { "label": "DNS routing", "result": "Healthy", "state": "healthy", "lastRun": "Today" }
+    ],
+    "priorities": [
+      { "title": "Lead intake sync", "description": "Promote accepted enquiries into admin records." },
+      { "title": "Portfolio updates", "description": "Link launched client sites back into case studies." },
+      { "title": "Health cards", "description": "Expose SSL, domain, and form status on dashboard." }
+    ],
+    "deployments": [
+      { "id": "ax-d1", "status": "success", "branch": "main", "message": "Update services pricing and tier cards", "timestamp": "Yesterday · 8:10 PM", "duration": "1m 32s", "actor": "Harrison" },
+      { "id": "ax-d2", "status": "success", "branch": "main", "message": "Add Rhino's Walk to Our Work section", "timestamp": "2 days ago · 3:44 PM", "duration": "1m 22s", "actor": "Thomas" },
+      { "id": "ax-d3", "status": "failed", "branch": "feat/contact-v2", "message": "Contact form v2 — build error in route handler", "timestamp": "3 days ago · 11:20 AM", "duration": "38s", "actor": "Harrison" },
+      { "id": "ax-d4", "status": "success", "branch": "main", "message": "Hotfix nav z-index on mobile", "timestamp": "3 days ago · 2:05 PM", "duration": "1m 01s", "actor": "Harrison" }
+    ],
+    "incidents": [
+      {
+        "id": "ax-i1",
+        "severity": "warning",
+        "title": "Contact form env audit required",
+        "body": "CONTACT_TO_EMAIL and RESEND_API_KEY should be reviewed against the production Netlify env vars. Last verified 3 weeks ago.",
+        "timestamp": "Yesterday",
+        "author": "Harrison"
+      }
+    ],
+    "contacts": [
+      { "id": "ax-c1", "name": "Harrison Coyle", "role": "Founder · Lead", "email": "harrison@aperix.com.au", "notes": "Primary contact for site, leads, and operations." },
+      { "id": "ax-c2", "name": "Thomas Coyle", "role": "Co-founder · Support", "email": "thomas@aperix.com.au", "notes": "Builds and shared ownership." }
+    ],
+    "credentials": [
+      { "id": "ax-cr1", "label": "Netlify org", "location": "1Password · Aperix vault", "ownedBy": "Harrison" },
+      { "id": "ax-cr2", "label": "Cloudflare account", "location": "1Password · Aperix vault", "ownedBy": "Harrison" },
+      { "id": "ax-cr3", "label": "Resend API key", "location": "Netlify env var · RESEND_API_KEY", "ownedBy": "Harrison", "notes": "Audit reminder linked to incident ax-i1." }
+    ],
+    "tasks": [
+      { "id": "ax-t1", "title": "Audit contact form env vars", "detail": "Verify RESEND_API_KEY and CONTACT_TO_EMAIL match production. Linked to incident ax-i1.", "owner": "Harrison", "status": "open", "due": "This week", "priority": "high" },
+      { "id": "ax-t2", "title": "Investigate failed contact-v2 deploy", "detail": "feat/contact-v2 branch failed build — review route handler.", "owner": "Harrison", "status": "in-progress", "priority": "medium" },
+      { "id": "ax-t3", "title": "Promote launched clients to portfolio", "detail": "Add Rhino's Walk case study card to Our Work.", "owner": "Thomas", "status": "open", "priority": "low" }
+    ]
+  },
+  {
+    "id": "hearthstone",
+    "name": "Hearthstone Café Demo",
+    "domain": "/demo/starter",
+    "stage": "Build",
+    "lead": "Thomas",
+    "support": "Harrison",
+    "tier": "Starter",
+    "health": "Build · Healthy",
+    "healthState": "healthy",
+    "hosting": "Inside Aperix",
+    "registrar": "N/A",
+    "dns": "N/A",
+    "repo": "Aperix-Website",
+    "repoStatus": "Shared",
+    "deploy": "Bundled with main site",
+    "summary": "A sales demo showing the Starter-tier offering and visual direction for small hospitality businesses.",
+    "notes": "Great pattern source for future café clients. Could later be promoted into a starter template or a cloned client repo.",
+    "liveUrl": "https://aperix.com.au/demo/starter",
+    "repoUrl": "https://github.com/AperixStudio/Aperix-Website",
+    "githubOrg": "AperixStudio",
+    "lastActivity": "This week",
+    "tags": ["build", "demo", "starter"],
+    "quickLinks": [
+      { "label": "View Demo", "url": "https://aperix.com.au/demo/starter", "category": "hosting" },
+      { "label": "GitHub", "url": "https://github.com/AperixStudio/Aperix-Website", "category": "repo" }
+    ],
+    "links": [
+      { "title": "Demo Route", "description": "Public demo inside the agency site" },
+      { "title": "Design Source", "description": "Reusable components and brand pattern" },
+      { "title": "Template Candidate", "description": "Potential aperix-site-starter seed" },
+      { "title": "Content Checklist", "description": "Swap-ready hospitality sections" }
+    ],
+    "checks": [
+      { "label": "Demo route", "result": "Available", "state": "healthy", "lastRun": "Today" },
+      { "label": "Banner labelling", "result": "Active", "state": "healthy", "lastRun": "Today" },
+      { "label": "Template extraction", "result": "Planned", "state": "attention", "lastRun": "This week" },
+      { "label": "Domain", "result": "N/A", "state": "neutral", "lastRun": "N/A" }
+    ],
+    "priorities": [
+      { "title": "Refactor reusable blocks", "description": "Turn demo sections into starter components." },
+      { "title": "Template split", "description": "Move shared parts into aperix-site-starter." },
+      { "title": "Clone for prospects", "description": "Use as a fast customisation base." }
+    ],
+    "deployments": [
+      { "id": "hs-d1", "status": "success", "branch": "main", "message": "Bundled with Aperix Website deploy", "timestamp": "Yesterday · 8:10 PM", "duration": "—", "actor": "Harrison" },
+      { "id": "hs-d2", "status": "success", "branch": "main", "message": "Add Hearthstone gallery and menu sections", "timestamp": "4 days ago", "duration": "1m 22s", "actor": "Thomas" }
+    ],
+    "incidents": [],
+    "contacts": [],
+    "credentials": [
+      { "id": "hs-cr1", "label": "Shared with Aperix Website", "location": "Demo lives inside the agency repo and Netlify project.", "ownedBy": "Harrison" }
+    ],
+    "tasks": [
+      { "id": "hs-t1", "title": "Extract reusable hospitality blocks", "detail": "Move shared parts into aperix-site-starter.", "owner": "Thomas", "status": "open", "priority": "medium" }
+    ]
+  },
+  {
+    "id": "lumina",
+    "name": "Lumina Med Spa",
+    "domain": "lumina-demo.aperix.com.au",
+    "stage": "Proposal",
+    "lead": "Thomas",
+    "support": "Harrison",
+    "tier": "Premium",
+    "health": "Needs Attention",
+    "healthState": "attention",
+    "hosting": "Netlify",
+    "registrar": "Cloudflare",
+    "dns": "Cloudflare",
+    "repo": "client-lumina-demo-site",
+    "repoStatus": "Private",
+    "deploy": "3 days ago",
+    "summary": "High-end premium demo with multi-page treatment, booking, FAQ, and about flows.",
+    "notes": "This style of project needs a richer client detail page: booking integrations, content approvals, treatment/legal review, and approval milestones.",
+    "liveUrl": "https://lumina-demo.aperix.com.au",
+    "stagingUrl": "https://client-lumina-demo-site.netlify.app",
+    "repoUrl": "https://github.com/AperixStudio/client-lumina-demo-site",
+    "githubOrg": "AperixStudio",
+    "netlifySite": "client-lumina-demo-site",
+    "lastActivity": "3 days ago",
+    "tags": ["proposal", "demo", "premium"],
+    "quickLinks": [
+      { "label": "View Demo", "url": "https://lumina-demo.aperix.com.au", "category": "hosting" },
+      { "label": "GitHub", "url": "https://github.com/AperixStudio/client-lumina-demo-site", "category": "repo" },
+      { "label": "Netlify", "url": "https://app.netlify.com/sites/client-lumina-demo-site/overview", "category": "hosting" },
+      { "label": "Cloudflare", "url": "https://dash.cloudflare.com", "category": "dns" }
+    ],
+    "links": [
+      { "title": "Repo", "description": "Premium demo source" },
+      { "title": "Preview", "description": "Stakeholder review link" },
+      { "title": "Booking Notes", "description": "Future integration references" },
+      { "title": "Design Board", "description": "Brand and visual references" },
+      { "title": "Checklist", "description": "Legal / compliance reminders" }
+    ],
+    "checks": [
+      { "label": "Stakeholder review", "result": "Pending", "state": "attention", "lastRun": "Today" },
+      { "label": "Deploy preview", "result": "Available", "state": "healthy", "lastRun": "3 days ago" },
+      { "label": "Domain routing", "result": "Preview only", "state": "attention", "lastRun": "Current" },
+      { "label": "Launch readiness", "result": "Blocked", "state": "attention", "lastRun": "Current" }
+    ],
+    "priorities": [
+      { "title": "Refine booking flow", "description": "Decide if form stays internal or becomes external integration." },
+      { "title": "Approval model", "description": "Add owner and signoff tracking in admin." },
+      { "title": "Status alerts", "description": "Surface pending content and launch blockers." }
+    ],
+    "deployments": [
+      { "id": "lm-d1", "status": "success", "branch": "main", "message": "Add treatment pages and booking flow", "timestamp": "3 days ago · 2:18 PM", "duration": "1m 44s", "actor": "Thomas" },
+      { "id": "lm-d2", "status": "success", "branch": "main", "message": "Initial premium demo scaffold", "timestamp": "6 days ago", "duration": "2m 10s", "actor": "Thomas" }
+    ],
+    "incidents": [
+      {
+        "id": "lm-i1",
+        "severity": "warning",
+        "title": "Awaiting client approval on treatment content",
+        "body": "Client has been sent the preview link. Legal review of treatment descriptions and pricing is pending. Block launch until approval received.",
+        "timestamp": "Today",
+        "author": "Thomas"
+      },
+      {
+        "id": "lm-i2",
+        "severity": "info",
+        "title": "Production domain not yet configured",
+        "body": "lumina-demo.aperix.com.au is the current preview domain. Production domain TBD pending client decision.",
+        "timestamp": "3 days ago",
+        "author": "Thomas"
+      }
+    ],
+    "contacts": [
+      { "id": "lm-c1", "name": "Prospective stakeholder", "role": "Decision maker (TBC)", "notes": "Awaiting client confirmation on scope and approval ownership." }
+    ],
+    "credentials": [
+      { "id": "lm-cr1", "label": "Netlify preview site", "location": "1Password · Aperix vault", "ownedBy": "Thomas" }
+    ],
+    "tasks": [
+      { "id": "lm-t1", "title": "Get client approval on treatment content", "detail": "Legal review of treatment descriptions and pricing pending.", "owner": "Thomas", "status": "blocked", "due": "Awaiting client", "priority": "high" },
+      { "id": "lm-t2", "title": "Decide production domain", "detail": "Currently on lumina-demo.aperix.com.au preview. Needs final decision before launch.", "owner": "Thomas", "status": "open", "priority": "medium" },
+      { "id": "lm-t3", "title": "Decide booking integration approach", "detail": "Internal form vs external integration.", "owner": "Thomas", "status": "open", "priority": "medium" }
+    ]
+  }
+]

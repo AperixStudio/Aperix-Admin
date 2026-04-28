@@ -1,0 +1,29 @@
+[
+  {
+    "id": "ntf_001",
+    "kind": "alert",
+    "title": "SSL expires in 14 days — Hearthstone Bakery",
+    "body": "Renew or confirm auto-renewal on Cloudflare.",
+    "timestamp": "2026-04-26T08:00:00Z",
+    "href": "/operations",
+    "read": false
+  },
+  {
+    "id": "ntf_002",
+    "kind": "ops",
+    "title": "Weekly ops digest ready",
+    "body": "4 deploys, 1 incident resolved, 2 tasks closed.",
+    "timestamp": "2026-04-25T07:00:00Z",
+    "href": "/metrics",
+    "read": false
+  },
+  {
+    "id": "ntf_003",
+    "kind": "info",
+    "title": "Lumina contract renews in 6 months",
+    "body": "Schedule pre-renewal call by August.",
+    "timestamp": "2026-04-20T07:00:00Z",
+    "href": "/contracts",
+    "read": true
+  }
+]

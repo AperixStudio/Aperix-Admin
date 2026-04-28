@@ -1,0 +1,90 @@
+{
+  "title": "New Client Template",
+  "description": "Schema-first onboarding. Today this is a checklist; later it can become a form that creates a real project record with placeholder integrations.",
+  "noteTitle": "Manual-first onboarding",
+  "noteBody": "Use this as the standard intake. Each field maps directly to a ProjectRecord property — adding values later is a JSON edit until we wire a creation form.",
+  "actions": [
+    { "label": "Back to Command Center", "href": "/" },
+    { "label": "Operations View", "href": "/operations" }
+  ],
+  "intro": {
+    "title": "Why this exists",
+    "body": "Every new client needs the same structured baseline so the dashboard, operations view, and renewals tracking work from day one. Filling these in manually now keeps the data clean while we build out automation."
+  },
+  "groups": [
+    {
+      "title": "Identity",
+      "description": "Who the client is and how the project is labelled across the portfolio.",
+      "fields": [
+        { "label": "Project name", "hint": "Display name shown across the dashboard.", "required": true },
+        { "label": "Project ID (slug)", "hint": "Used in URLs and as the primary key. Lowercase, hyphenated.", "required": true },
+        { "label": "Tier", "hint": "Starter / Business / Premium / Agency." },
+        { "label": "Tags", "hint": "Free-form pills used for filtering, e.g. live, demo, hospitality." }
+      ]
+    },
+    {
+      "title": "Ownership",
+      "description": "Who is responsible inside Aperix.",
+      "fields": [
+        { "label": "Lead owner", "hint": "Primary point of contact internally.", "required": true },
+        { "label": "Support owner", "hint": "Backup / paired owner." }
+      ]
+    },
+    {
+      "title": "Hosting & Infrastructure",
+      "description": "The technical surface area we operate.",
+      "fields": [
+        { "label": "Live URL", "hint": "Production website URL.", "required": true },
+        { "label": "Staging URL", "hint": "Preview / staging deploy URL." },
+        { "label": "Hosting provider", "hint": "Netlify, Vercel, Cloudflare Pages, etc." },
+        { "label": "Repo URL", "hint": "GitHub repo for the site source." },
+        { "label": "DNS provider", "hint": "Where the zone records live." },
+        { "label": "Registrar", "hint": "Where the domain is registered." }
+      ]
+    },
+    {
+      "title": "Renewals",
+      "description": "Tracked centrally on the Operations view.",
+      "fields": [
+        { "label": "Domain expiry", "hint": "Free-form, e.g. 'Mar 2027'. Renewal alerts derive from this." },
+        { "label": "SSL expiry", "hint": "Free-form. Surfaced on the Operations renewals panel." }
+      ]
+    },
+    {
+      "title": "People",
+      "description": "Client-side contacts and credential references.",
+      "fields": [
+        { "label": "Contacts", "hint": "Add one per stakeholder: name, role, email, phone, notes." },
+        { "label": "Credentials", "hint": "Reference vault locations only — never store actual secrets here." }
+      ]
+    },
+    {
+      "title": "Operational Content",
+      "description": "Optional but powerful. These power the client workspace.",
+      "fields": [
+        { "label": "Quick links", "hint": "Hosting, repo, DNS, vault, analytics. Drives the Quick Actions bar." },
+        { "label": "Health checks", "hint": "What to monitor (homepage, SSL, contact form, DNS)." },
+        { "label": "Priorities", "hint": "Current focus areas / open work." },
+        { "label": "Tasks", "hint": "Action queue items with owner, priority, due." }
+      ]
+    }
+  ],
+  "nextSteps": [
+    {
+      "title": "1. Create the JSON record",
+      "description": "Append a new project to data/admin/projects.json using the schema above. Required fields: id, name, lead, support, liveUrl, githubOrg."
+    },
+    {
+      "title": "2. Add to navigation",
+      "description": "The dashboard, operations view, and renewals panel will pick the project up automatically once it's in the file."
+    },
+    {
+      "title": "3. Fill the workspace gradually",
+      "description": "A 30%-filled record is still useful. Missing fields are surfaced as 'setup needed' so you always know what to add next."
+    },
+    {
+      "title": "4. Future automation",
+      "description": "When integrations land, deployments, SSL, and uptime will populate themselves — but the manual record stays the source of truth."
+    }
+  ]
+}

@@ -1,0 +1,23 @@
+{
+  "title": "Operations",
+  "description": "Cross-portfolio view of providers, renewals, action queue, and operational health. This is the panel to open weekly.",
+  "noteTitle": "Manual-first, integration-ready",
+  "noteBody": "Today this is fed by your internal records. Later, GitHub, Netlify, Cloudflare, and uptime checks can populate the same fields automatically.",
+  "actions": [
+    { "label": "Back to Command Center", "href": "/" },
+    { "label": "New Client", "href": "/onboarding", "primary": true }
+  ],
+  "sections": {
+    "renewals": "Upcoming Renewals",
+    "actionQueue": "Action Queue",
+    "providers": "Providers & Systems",
+    "setupHealth": "Record Completeness",
+    "recentDeploys": "Recent Deploys (All Sites)",
+    "openIncidents": "Open Incidents"
+  },
+  "copy": {
+    "renewalsEmpty": "No domain or SSL expiries on file. Add a domainExpiry / sslExpiry to each project to enable renewal tracking.",
+    "actionQueueEmpty": "Nothing in the queue. The team is clear.",
+    "setupHealthHint": "Records below 60% are flagged. Add the missing fields so this site is fully operationally trackable."
+  }
+}

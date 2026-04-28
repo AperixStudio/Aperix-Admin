@@ -1,0 +1,4 @@
+{
+  "project_id": "",
+  "_comment": "Run `supabase link --project-ref <ref>` from this directory to populate project_id."
+}

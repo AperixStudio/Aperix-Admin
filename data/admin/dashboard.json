@@ -1,0 +1,123 @@
+{
+  "title": "Agency Dashboard",
+  "description": "One high-level place to see every client website, who owns it, whether it is healthy, where it is hosted, and what needs attention next.",
+  "noteTitle": "How this fits Aperix",
+  "noteBody": "Keep Aperix-Website public. Build this as Aperix-Admin and progressively sync it with GitHub, Netlify, Cloudflare, and your lead pipeline.",
+  "actions": [
+    { "label": "Open Client View", "href": "/clients/rhinos", "primary": true },
+    { "label": "Repo Structure", "href": "/repos" }
+  ],
+  "activityTitle": "Recent Activity",
+  "filters": ["all", "Harrison", "Thomas", "Live", "Build", "attention"],
+  "filterConfig": {
+    "Harrison": { "field": "lead", "match": "Harrison" },
+    "Thomas":   { "field": "lead", "match": "Thomas" },
+    "Live":     { "field": "stage", "match": "Live" },
+    "Build":    { "field": "stage", "match": "Build" },
+    "attention":{ "field": "healthState", "match": "attention" }
+  },
+  "stats": [
+    {
+      "key": "total",
+      "label": "Total Websites",
+      "description": "Live clients, internal demos, active builds, and maintenance sites."
+    },
+    {
+      "key": "healthy",
+      "label": "Healthy / Live",
+      "description": "Passed recent checks for uptime, SSL, deploy freshness, and domain routing."
+    },
+    {
+      "key": "attention",
+      "label": "Needs Attention",
+      "description": "Hosting, content, or approval tasks waiting on action this week."
+    },
+    {
+      "key": "ownerSplit",
+      "label": "Owner Split",
+      "description": "Lead ownership balance across the current portfolio."
+    }
+  ],
+  "board": {
+    "title": "Website Portfolio Board",
+    "description": "This is the main dashboard board. Each site shows lead owner, status, stack, and last deploy freshness at a glance."
+  },
+  "overview": {
+    "title": "What this page does",
+    "description": "Fast daily triage. You open this first and immediately know what is healthy, who owns what, and where to click next.",
+    "items": [
+      {
+        "title": "Morning scan",
+        "description": "Check alerts, recent deploys, and any site marked as needing attention."
+      },
+      {
+        "title": "Ownership clarity",
+        "description": "Every project shows lead owner and support owner so both of you know who is driving it."
+      },
+      {
+        "title": "One-click drilldown",
+        "description": "Open the client detail page for hosting, repo, DNS, launch tasks, and linked dashboards."
+      }
+    ]
+  },
+  "alerts": {
+    "title": "Recent alerts",
+    "rows": [
+      { "site": "Lumina", "issue": "Waiting on client approval", "owner": "Thomas" },
+      { "site": "Aperix", "issue": "Form/env audit reminder", "owner": "Harrison" },
+      { "site": "Rhino’s Walk", "issue": "Monthly backup due", "owner": "Harrison" }
+    ]
+  },
+  "activity": [
+    {
+      "id": "a1",
+      "type": "deploy",
+      "title": "Rhino's Walk deployed",
+      "detail": "main — Update hero copy and add team photo",
+      "timestamp": "Today 11:42",
+      "actor": "Harrison",
+      "state": "healthy"
+    },
+    {
+      "id": "a2",
+      "type": "check",
+      "title": "SSL checks passed",
+      "detail": "All production sites verified clean",
+      "timestamp": "Today 09:00",
+      "actor": "System",
+      "state": "healthy"
+    },
+    {
+      "id": "a3",
+      "type": "alert",
+      "title": "Lumina approval pending",
+      "detail": "Client stakeholder review — Thomas needs to follow up",
+      "timestamp": "Yesterday",
+      "actor": "Thomas",
+      "state": "attention"
+    },
+    {
+      "id": "a4",
+      "type": "deploy",
+      "title": "Aperix Website deployed",
+      "detail": "main — Update services pricing and tier cards",
+      "timestamp": "Yesterday 20:10",
+      "actor": "Harrison",
+      "state": "healthy"
+    },
+    {
+      "id": "a5",
+      "type": "alert",
+      "title": "Contact env audit needed",
+      "detail": "Aperix production Resend env vars need review",
+      "timestamp": "Yesterday",
+      "actor": "Harrison",
+      "state": "attention"
+    }
+  ],
+  "design": {
+    "title": "Design idea",
+    "description": "Aperix-like editorial glass UI, but more operational and dense. Calm layout, high-signal cards, and no clutter.",
+    "callout": "In the real app, these cards would be hydrated from your internal client records and later enhanced with GitHub, Netlify, and Cloudflare API data."
+  }
+}

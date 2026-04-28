@@ -1,0 +1,50 @@
+[
+  {
+    "id": "ctr_rhinos",
+    "projectId": "rhinos-walk",
+    "status": "active",
+    "tier": "Premium",
+    "startDate": "2025-09-01",
+    "endDate": "2026-09-01",
+    "mrr": 590,
+    "currency": "AUD",
+    "hoursAllotted": 6,
+    "hoursUsed": 4,
+    "notes": "Annual renewal Sep 2026. Includes monthly content updates."
+  },
+  {
+    "id": "ctr_aperix",
+    "projectId": "aperix",
+    "status": "active",
+    "tier": "Internal",
+    "startDate": "2024-01-01",
+    "mrr": 0,
+    "currency": "AUD",
+    "notes": "Aperix Studio public site — internal."
+  },
+  {
+    "id": "ctr_hearthstone",
+    "projectId": "hearthstone",
+    "status": "trial",
+    "tier": "Starter",
+    "startDate": "2026-03-15",
+    "mrr": 250,
+    "currency": "AUD",
+    "hoursAllotted": 2,
+    "hoursUsed": 1,
+    "notes": "Pilot. Convert by end of trial."
+  },
+  {
+    "id": "ctr_lumina",
+    "projectId": "lumina",
+    "status": "active",
+    "tier": "Business",
+    "startDate": "2025-11-01",
+    "endDate": "2026-11-01",
+    "mrr": 420,
+    "currency": "AUD",
+    "hoursAllotted": 4,
+    "hoursUsed": 3,
+    "notes": "Quarterly review meeting cadence."
+  }
+]

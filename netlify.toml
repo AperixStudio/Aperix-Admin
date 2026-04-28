@@ -1,0 +1,36 @@
+# Netlify configuration for Aperix Admin
+# Docs: https://docs.netlify.com/configure-builds/file-based-configuration/
+
+[build]
+  command   = "npm run build"
+  publish   = ".next"
+
+# Next.js plugin handles SSR, ISR, middleware, image optimisation, etc.
+[[plugins]]
+  package = "@netlify/plugin-nextjs"
+
+# Scheduled functions
+# These hit our internal /api/cron/* endpoints which are guarded by the
+# CRON_SECRET env var. Netlify automatically attaches an internal-only
+# auth header; we additionally check x-cron-secret.
+#
+# Daily digest: 22:00 UTC = 08:00 AEST (AEST = UTC+10, ignoring DST).
+# Adjust if you need stricter Australian Eastern Daylight Time handling.
+
+[functions]
+  node_bundler = "esbuild"
+
+[[scheduled.functions]]
+  name     = "daily-digest"
+  schedule = "0 22 * * *"
+
+# Long-form headers / redirects can live here too. Keep this minimal —
+# we have Cloudflare Access in front for the auth perimeter.
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options          = "DENY"
+    X-Content-Type-Options   = "nosniff"
+    Referrer-Policy          = "strict-origin-when-cross-origin"
+    Permissions-Policy       = "camera=(), microphone=(), geolocation=()"

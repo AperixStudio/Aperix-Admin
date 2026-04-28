@@ -1,0 +1,58 @@
+[
+  {
+    "id": "rb_dns_down",
+    "title": "DNS resolution failing for a client",
+    "category": "incident",
+    "triggers": ["site unreachable", "DNS_PROBE_FINISHED_NXDOMAIN", "uptime alert"],
+    "owner": "Harrison",
+    "lastReviewed": "2026-03-14",
+    "steps": [
+      { "title": "Confirm scope", "detail": "Test domain from 2+ networks (mobile data, dnschecker.org). Check sister sites at the same registrar." },
+      { "title": "Inspect provider", "detail": "Open Cloudflare → DNS. Confirm A / CNAME records match expected. Check for recent changes." },
+      { "title": "Check registrar nameservers", "detail": "Verify nameservers at registrar still point at Cloudflare (or expected DNS host)." },
+      { "title": "Notify client", "detail": "Send templated incident message; set incident state to investigating." },
+      { "title": "Resolve + postmortem", "detail": "After fix, advance incident to resolved, then write postmortem within 24h." }
+    ]
+  },
+  {
+    "id": "rb_deploy_failed",
+    "title": "Netlify deploy failed",
+    "category": "deploy",
+    "triggers": ["build failed webhook", "PR check red"],
+    "owner": "Thomas",
+    "lastReviewed": "2026-04-02",
+    "steps": [
+      { "title": "Read build log", "detail": "Open Netlify deploy → Deploy log. Look for first error line." },
+      { "title": "Reproduce locally", "detail": "Pull branch, npm install, npm run build." },
+      { "title": "Lockfile drift?", "detail": "If error mentions missing module, regenerate lockfile and commit." },
+      { "title": "Roll back if blocking prod", "detail": "Netlify → Deploys → Publish previous successful deploy." }
+    ]
+  },
+  {
+    "id": "rb_renewal_60d",
+    "title": "Domain or SSL within 60 days of expiry",
+    "category": "renewal",
+    "triggers": ["renewal cron", "ops review"],
+    "owner": "Harrison",
+    "lastReviewed": "2026-04-01",
+    "steps": [
+      { "title": "Confirm registrar auto-renew", "detail": "If on Porkbun/Namecheap, verify auto-renew is ON and payment method valid." },
+      { "title": "Notify client (if billed-back)", "detail": "Send renewal-confirmation email per contract terms." },
+      { "title": "Update record", "detail": "After renewal, update domainExpiry / sslExpiry fields on the project." }
+    ]
+  },
+  {
+    "id": "rb_credential_rotation",
+    "title": "Rotate shared credential",
+    "category": "security",
+    "triggers": ["staff change", "annual review", "suspected leak"],
+    "owner": "Harrison",
+    "lastReviewed": "2026-02-10",
+    "steps": [
+      { "title": "Generate new secret", "detail": "Use provider console; never reuse." },
+      { "title": "Update vault", "detail": "Update 1Password / Bitwarden item; bump version note." },
+      { "title": "Roll in services", "detail": "Update env vars in Netlify / GitHub Actions / runtime." },
+      { "title": "Audit", "detail": "Log rotation in Aperix Admin → automatic via reveal action." }
+    ]
+  }
+]

@@ -1,0 +1,39 @@
+[
+  {
+    "key": "ai-query",
+    "label": "AI Query",
+    "description": "Natural-language queries across the dataset.",
+    "enabled": true,
+    "audience": "all",
+    "note": "Heuristic answers today. Pluggable LLM adapter when an OSS model is wired."
+  },
+  {
+    "key": "credential-reveal",
+    "label": "Credential reveal",
+    "description": "Reveal modal with re-auth + audit (vault integration off until configured).",
+    "enabled": true,
+    "audience": "admin"
+  },
+  {
+    "key": "experimental-metrics",
+    "label": "Experimental metrics",
+    "description": "Synthetic DORA + uptime trend tiles.",
+    "enabled": true,
+    "audience": "all"
+  },
+  {
+    "key": "slack-alerts",
+    "label": "Slack alerts on critical incident",
+    "description": "Posts to SLACK_WEBHOOK_URL if configured.",
+    "enabled": true,
+    "audience": "all"
+  },
+  {
+    "key": "github-live-repos",
+    "label": "Live GitHub repos",
+    "description": "Pulls org repositories live when GITHUB_TOKEN is set.",
+    "enabled": false,
+    "audience": "all",
+    "note": "Set GITHUB_TOKEN + GITHUB_ORG in .env.local then enable."
+  }
+]

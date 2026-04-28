@@ -1,0 +1,81 @@
+{
+  "title": "Repo & Org Structure",
+  "description": "This view shows how AperixStudio should be organised so your agency site, internal admin, templates, and client sites stay cleanly separated.",
+  "secondaryLabel": "Repo Groups",
+  "secondaryItems": [
+    { "label": "Agency", "href": "#agency" },
+    { "label": "Starter / Template", "href": "#starter" },
+    { "label": "Client Production", "href": "#client" },
+    { "label": "Internal Ops", "href": "#internal" }
+  ],
+  "actions": [
+    { "label": "Back to Dashboard", "href": "/" },
+    { "label": "Open Client Detail", "href": "/clients/rhinos" }
+  ],
+  "noteTitle": "Recommended rule",
+  "noteBody": "Demo work lives in Aperix-Website. Real paid client work gets its own repo immediately.",
+  "layout": {
+    "title": "Recommended GitHub Org Layout",
+    "heading": "AperixStudio",
+    "tree": "AperixStudio/\n├─ Aperix-Website\n│  ├─ public agency website\n│  ├─ demos / portfolio pieces\n│  └─ lead capture / enquiry flow\n│\n├─ Aperix-Admin\n│  ├─ internal dashboard\n│  ├─ client records\n│  ├─ health checks\n│  └─ hosting / repo / access links\n│\n├─ aperix-site-starter\n│  ├─ reusable Next.js starter\n│  ├─ shared blocks and patterns\n│  └─ launch baseline for new clients\n│\n├─ client-rhinos-walk-site\n├─ client-future-cafe-site\n├─ client-future-tradie-site\n│\n└─ aperix-internal\n   ├─ SOPs\n   ├─ docs\n   └─ small scripts / operations"
+  },
+  "repoPurposes": {
+    "title": "What each repo is for",
+    "items": [
+      {
+        "title": "Aperix-Website",
+        "description": "Public marketing site, live demos, portfolio, pricing, and contact funnel."
+      },
+      {
+        "title": "Aperix-Admin",
+        "description": "Private command center for both of you to manage operational reality."
+      },
+      {
+        "title": "aperix-site-starter",
+        "description": "Starter base for new builds so you stop rebuilding everything from zero."
+      }
+    ]
+  },
+  "clientPattern": {
+    "title": "Client repo pattern",
+    "heading": "Example: client-rhinos-walk-site",
+    "tree": "client-rhinos-walk-site/\n├─ app/\n├─ components/\n├─ lib/\n├─ public/\n├─ docs/\n│  ├─ content-notes\n│  ├─ launch-checklist\n│  └─ handoff-notes\n├─ .env.example\n├─ netlify.toml\n└─ README (optional internal use)"
+  },
+  "flow": {
+    "title": "How work flows",
+    "items": [
+      {
+        "title": "Lead enters through Aperix-Website",
+        "description": "Contact form captures the enquiry and later feeds a client/project record into the admin app."
+      },
+      {
+        "title": "Project is accepted",
+        "description": "Create a new client repo from aperix-site-starter and assign lead/support owners."
+      },
+      {
+        "title": "Site gets hosted",
+        "description": "Connect GitHub, Netlify, Cloudflare, and the domain registrar, then document the stack in admin."
+      },
+      {
+        "title": "Admin app becomes the control layer",
+        "description": "It does not replace the repos — it sits above them and gives you one operational view."
+      }
+    ]
+  },
+  "why": {
+    "title": "Why this view matters",
+    "rows": [
+      { "problem": "Client work mixed into agency site", "fix": "Separate repos per real client" },
+      { "problem": "Hard to know where hosting lives", "fix": "Admin links each project to its stack" },
+      { "problem": "Ownership gets fuzzy", "fix": "Lead and support roles are explicit" },
+      { "problem": "Repeating setup work", "fix": "Starter repo standardises launches" }
+    ]
+  },
+  "liveExamples": {
+    "title": "Live examples from the prototype"
+  },
+  "design": {
+    "title": "Design takeaway",
+    "callout": "This page is less about code browsing and more about architecture clarity: what repos exist, what they are for, and how they connect to domains, hosts, and ownership."
+  }
+}

@@ -1,0 +1,36 @@
+[
+  {
+    "id": "chg_001",
+    "date": "2026-04-26T10:00:00Z",
+    "kind": "ship",
+    "title": "Operations command center launched",
+    "body": "Action queue, renewals, completeness, providers grouping. /operations is now the daily landing page for ops work.",
+    "author": "Harrison"
+  },
+  {
+    "id": "chg_002",
+    "date": "2026-04-22T14:00:00Z",
+    "kind": "ops",
+    "title": "Lumina Aesthetics quarterly review",
+    "body": "Reviewed 90-day metrics with client. Approved Q3 backlog.",
+    "author": "Thomas",
+    "projectIds": ["lumina"]
+  },
+  {
+    "id": "chg_003",
+    "date": "2026-04-18T09:00:00Z",
+    "kind": "fix",
+    "title": "Fixed contact-form throttle bug on Aperix site",
+    "body": "Reset rate-limit window after deploy mismatch.",
+    "author": "Harrison",
+    "projectIds": ["aperix"]
+  },
+  {
+    "id": "chg_004",
+    "date": "2026-04-12T11:00:00Z",
+    "kind": "security",
+    "title": "Rotated shared Resend API key",
+    "body": "Annual rotation. Vault updated, all sites redeployed.",
+    "author": "Harrison"
+  }
+]

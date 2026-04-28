@@ -1,0 +1,222 @@
+[
+  {
+    "action": "create",
+    "entityType": "project",
+    "entityId": "mcgrath-es",
+    "note": "Created via onboarding form (mode=live)",
+    "id": "aud_moi59mxy_6wssd",
+    "timestamp": "2026-04-28T04:47:05.062Z",
+    "actor": "unknown",
+    "role": "viewer"
+  },
+  {
+    "action": "create",
+    "entityType": "project",
+    "entityId": "mcgrath-elecserv",
+    "note": "Created via onboarding form (mode=live)",
+    "id": "aud_moi56gmp_bqfwh",
+    "timestamp": "2026-04-28T04:44:36.913Z",
+    "actor": "unknown",
+    "role": "viewer"
+  },
+  {
+    "action": "create",
+    "entityType": "project",
+    "entityId": "mcgrathelectricservice",
+    "note": "Created via onboarding form (mode=live)",
+    "id": "aud_moi5402p_9ohjz",
+    "timestamp": "2026-04-28T04:42:42.145Z",
+    "actor": "unknown",
+    "role": "viewer"
+  },
+  {
+    "action": "data-mode",
+    "entityType": "session",
+    "entityId": "self",
+    "note": "→ live",
+    "id": "aud_moi1hpt3_7uwqz",
+    "timestamp": "2026-04-28T03:01:23.559Z",
+    "actor": "unknown",
+    "role": "viewer"
+  },
+  {
+    "action": "data-mode",
+    "entityType": "session",
+    "entityId": "self",
+    "note": "→ mock",
+    "id": "aud_moi14n6d_c9ltc",
+    "timestamp": "2026-04-28T02:51:13.621Z",
+    "actor": "unknown",
+    "role": "viewer"
+  },
+  {
+    "action": "data-mode",
+    "entityType": "session",
+    "entityId": "self",
+    "note": "→ live",
+    "id": "aud_moi11lcy_4c9h7",
+    "timestamp": "2026-04-28T02:48:51.298Z",
+    "actor": "unknown",
+    "role": "viewer"
+  },
+  {
+    "action": "data-mode",
+    "entityType": "session",
+    "entityId": "self",
+    "note": "→ mock",
+    "id": "aud_moi0whk0_hd4f8",
+    "timestamp": "2026-04-28T02:44:53.088Z",
+    "actor": "unknown",
+    "role": "viewer"
+  },
+  {
+    "action": "data-mode",
+    "entityType": "session",
+    "entityId": "self",
+    "note": "→ empty",
+    "id": "aud_moi0wd9x_fdvhc",
+    "timestamp": "2026-04-28T02:44:47.541Z",
+    "actor": "unknown",
+    "role": "viewer"
+  },
+  {
+    "action": "data-mode",
+    "entityType": "session",
+    "entityId": "self",
+    "note": "→ live",
+    "id": "aud_moi013xi_ex7qh",
+    "timestamp": "2026-04-28T02:20:29.094Z",
+    "actor": "unknown",
+    "role": "viewer"
+  },
+  {
+    "action": "data-mode",
+    "entityType": "session",
+    "entityId": "self",
+    "note": "→ mock",
+    "id": "aud_mohzyq6b_74z95",
+    "timestamp": "2026-04-28T02:18:37.955Z",
+    "actor": "unknown",
+    "role": "viewer"
+  },
+  {
+    "action": "data-mode",
+    "entityType": "session",
+    "entityId": "self",
+    "note": "→ live",
+    "id": "aud_mohzy7lx_3kcee",
+    "timestamp": "2026-04-28T02:18:13.893Z",
+    "actor": "unknown",
+    "role": "viewer"
+  },
+  {
+    "action": "data-mode",
+    "entityType": "session",
+    "entityId": "self",
+    "note": "→ live",
+    "id": "aud_mohzxzoi_umwjg",
+    "timestamp": "2026-04-28T02:18:03.618Z",
+    "actor": "unknown",
+    "role": "viewer"
+  },
+  {
+    "action": "data-mode",
+    "entityType": "session",
+    "entityId": "self",
+    "note": "→ empty",
+    "id": "aud_mohzxy68_29n3y",
+    "timestamp": "2026-04-28T02:18:01.664Z",
+    "actor": "unknown",
+    "role": "viewer"
+  },
+  {
+    "action": "data-mode",
+    "entityType": "session",
+    "entityId": "self",
+    "note": "→ live",
+    "id": "aud_mohzxvx0_b6tz4",
+    "timestamp": "2026-04-28T02:17:58.740Z",
+    "actor": "unknown",
+    "role": "viewer"
+  },
+  {
+    "action": "data-mode",
+    "entityType": "session",
+    "entityId": "self",
+    "note": "→ mock",
+    "id": "aud_mohzxp7p_9gtr9",
+    "timestamp": "2026-04-28T02:17:50.053Z",
+    "actor": "unknown",
+    "role": "viewer"
+  },
+  {
+    "action": "data-mode",
+    "entityType": "session",
+    "entityId": "self",
+    "note": "→ empty",
+    "id": "aud_mohzxoi4_cnorl",
+    "timestamp": "2026-04-28T02:17:49.132Z",
+    "actor": "unknown",
+    "role": "viewer"
+  },
+  {
+    "action": "data-mode",
+    "entityType": "session",
+    "entityId": "self",
+    "note": "→ live",
+    "id": "aud_mohzxm4o_bbtj1",
+    "timestamp": "2026-04-28T02:17:46.056Z",
+    "actor": "unknown",
+    "role": "viewer"
+  },
+  {
+    "action": "data-mode",
+    "entityType": "session",
+    "entityId": "self",
+    "note": "→ mock",
+    "id": "aud_mohzx386_4ba9h",
+    "timestamp": "2026-04-28T02:17:21.558Z",
+    "actor": "unknown",
+    "role": "viewer"
+  },
+  {
+    "action": "data-mode",
+    "entityType": "session",
+    "entityId": "self",
+    "note": "→ live",
+    "id": "aud_mohzx1ka_zg3d6",
+    "timestamp": "2026-04-28T02:17:19.402Z",
+    "actor": "unknown",
+    "role": "viewer"
+  },
+  {
+    "action": "data-mode",
+    "entityType": "session",
+    "entityId": "self",
+    "note": "→ mock",
+    "id": "aud_mohzwzly_e12yr",
+    "timestamp": "2026-04-28T02:17:16.870Z",
+    "actor": "unknown",
+    "role": "viewer"
+  },
+  {
+    "action": "data-mode",
+    "entityType": "session",
+    "entityId": "self",
+    "note": "→ empty",
+    "id": "aud_mohzwwt0_ydb5u",
+    "timestamp": "2026-04-28T02:17:13.236Z",
+    "actor": "unknown",
+    "role": "viewer"
+  },
+  {
+    "action": "data-mode",
+    "entityType": "session",
+    "entityId": "self",
+    "note": "→ live",
+    "id": "aud_mohzwpu9_s7qh1",
+    "timestamp": "2026-04-28T02:17:04.209Z",
+    "actor": "unknown",
+    "role": "viewer"
+  }
+]
