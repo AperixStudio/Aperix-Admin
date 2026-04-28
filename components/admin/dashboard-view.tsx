@@ -6,9 +6,8 @@ import { AppShell } from "@/components/admin/app-shell";
 import { ActionQueueList } from "@/components/admin/action-queue-list";
 import { RenewalsList } from "@/components/admin/renewals-list";
 import { getHealthDotClass } from "@/lib/admin-utils";
-import type { ActionQueueItem, ActivityEntry, DashboardContent, DashboardStats, ProjectRecord, RenewalItem, UiConfig } from "@/lib/admin-types";
-
-const ACTIVITY_ICONS: Record<string, string> = { deploy: "↑", alert: "⚠", check: "✓" };
+import type { ActionQueueItem, DashboardContent, DashboardStats, ProjectRecord, RenewalItem, UiConfig } from "@/lib/admin-types";
+import type { RecentDeploy } from "@/lib/data/adapter";
 
 type FilterValue = string;
 
@@ -19,10 +18,20 @@ interface DashboardViewProps {
   stats: DashboardStats;
   actionQueue?: ActionQueueItem[];
   renewals?: RenewalItem[];
+  recentDeploys?: RecentDeploy[];
   shellExtras?: Record<string, unknown>;
 }
 
-export function DashboardView({ ui, content, projects, stats, actionQueue = [], renewals = [], shellExtras = {} }: DashboardViewProps) {
+export function DashboardView({
+  ui,
+  content,
+  projects,
+  stats,
+  actionQueue = [],
+  renewals = [],
+  recentDeploys = [],
+  shellExtras = {},
+}: DashboardViewProps) {
   const [currentFilter, setCurrentFilter] = useState<FilterValue>(content.filters[0] ?? "all");
   const [search, setSearch] = useState("");
 
@@ -80,32 +89,6 @@ export function DashboardView({ ui, content, projects, stats, actionQueue = [], 
           );
         })}
       </section>
-
-      {(actionQueue.length > 0 || renewals.length > 0) && (
-        <section className="grid-2 ops-stripe">
-          <div className="panel section">
-            <div className="panel-head">
-              <h3>Action Queue</h3>
-              <Link href="/notifications" className="panel-head-link">View notifications →</Link>
-            </div>
-            <ActionQueueList
-              items={actionQueue}
-              emptyCopy="Nothing in the queue. The team is clear."
-              limit={4}
-            />
-          </div>
-          <div className="panel section">
-            <div className="panel-head">
-              <h3>Upcoming Renewals</h3>
-              <Link href="/contracts" className="panel-head-link">View contracts →</Link>
-            </div>
-            <RenewalsList
-              items={renewals.slice(0, 4)}
-              emptyCopy="No domain or SSL expiries on file."
-            />
-          </div>
-        </section>
-      )}
 
       <section className="grid-2">
         <div className="panel section">
@@ -218,69 +201,78 @@ export function DashboardView({ ui, content, projects, stats, actionQueue = [], 
 
         <div className="stack">
           <div className="panel section">
-            <h3>{content.overview.title}</h3>
-            <p className="section-copy">{content.overview.description}</p>
-
-            <div className="timeline">
-              {content.overview.items.map((item) => (
-                <div key={item.title} className="timeline-item">
-                  <div className="timeline-node-wrap"><div className="timeline-node" /></div>
-                  <div>
-                    <strong>{item.title}</strong>
-                    <span>{item.description}</span>
-                  </div>
-                </div>
-              ))}
+            <div className="panel-head">
+              <h3>Recent Deploys</h3>
+              <Link href="/timeline" className="panel-head-link">View timeline →</Link>
             </div>
-          </div>
-
-          <div className="panel section">
-            <h3>{content.alerts.title}</h3>
-            <table className="table">
-              <thead>
-                <tr>
-                  <th>Site</th>
-                  <th>Issue</th>
-                  <th>Owner</th>
-                </tr>
-              </thead>
-              <tbody>
-                {content.alerts.rows.map((row) => (
-                  <tr key={`${row.site}-${row.issue}`}>
-                    <td>{row.site}</td>
-                    <td>{row.issue}</td>
-                    <td>{row.owner}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-
-          <div className="panel section">
-            <h3>{content.design.title}</h3>
-            <p className="section-copy">{content.design.description}</p>
-            <div className="callout">{content.design.callout}</div>
-          </div>
-
-          {content.activity && content.activity.length > 0 && (
-            <div className="panel section">
-              <h3>{content.activityTitle ?? "Activity"}</h3>
+            {recentDeploys.length ? (
               <div className="activity-feed">
-                {content.activity.map((item: ActivityEntry) => (
-                  <div key={item.id} className="activity-item">
-                    <div className={`activity-icon ${item.type}`}>
-                      {ACTIVITY_ICONS[item.type] ?? "·"}
+                {recentDeploys.map((deploy) => (
+                  <div key={`${deploy.projectId}-${deploy.id}`} className="activity-item">
+                    <div className={`activity-icon ${deploy.status === "success" ? "deploy" : "alert"}`}>
+                      {deploy.status === "success" ? "↑" : "⚠"}
                     </div>
                     <div className="activity-content">
-                      <div className="activity-title">{item.title}</div>
-                      <div className="activity-detail">{item.detail}</div>
-                      <div className="activity-ts">{item.timestamp} · {item.actor}</div>
+                      <div className="activity-title">{deploy.projectName} deployed</div>
+                      <div className="activity-detail">{deploy.branch} — {deploy.message}</div>
+                      <div className="activity-ts">{deploy.timestamp} · {deploy.actor}</div>
                     </div>
                   </div>
                 ))}
               </div>
+            ) : (
+              <div className="empty-state">No deploy events recorded yet.</div>
+            )}
+          </div>
+
+          <div className="panel section">
+            <div className="panel-head">
+              <h3>Action Queue</h3>
+              <Link href="/notifications" className="panel-head-link">View notifications →</Link>
             </div>
-          )}
+            <ActionQueueList
+              items={actionQueue}
+              emptyCopy="Nothing in the queue. The team is clear."
+              limit={6}
+            />
+          </div>
+
+          <div className="panel section">
+            <div className="panel-head">
+              <h3>Upcoming Renewals</h3>
+              <Link href="/contracts" className="panel-head-link">View contracts →</Link>
+            </div>
+            <RenewalsList
+              items={renewals.slice(0, 6)}
+              emptyCopy="No domain or SSL expiries on file."
+            />
+          </div>
+          <div className="panel section">
+            <h3>Live Data Status</h3>
+            <div className="timeline">
+              <div className="timeline-item">
+                <div className="timeline-node-wrap"><div className="timeline-node" /></div>
+                <div>
+                  <strong>Projects indexed</strong>
+                  <span>{projects.length} records from Supabase.</span>
+                </div>
+              </div>
+              <div className="timeline-item">
+                <div className="timeline-node-wrap"><div className="timeline-node" /></div>
+                <div>
+                  <strong>Open queue items</strong>
+                  <span>{actionQueue.length} actionable items.</span>
+                </div>
+              </div>
+              <div className="timeline-item">
+                <div className="timeline-node-wrap"><div className="timeline-node" /></div>
+                <div>
+                  <strong>Upcoming renewals</strong>
+                  <span>{renewals.length} domain/SSL records tracked.</span>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </section>
     </AppShell>
