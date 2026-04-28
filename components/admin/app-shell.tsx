@@ -192,6 +192,11 @@ export function AppShell({
             <span className="topbar-user" title={`Signed in as ${user}`}>
               {user}
             </span>
+            <form action="/auth/signout" method="post">
+              <button type="submit" className="topbar-icon-btn" title="Sign out">
+                ↩ Sign out
+              </button>
+            </form>
             <KeyboardHelp firstClientId={firstClientId} />
           </div>
         </header>
