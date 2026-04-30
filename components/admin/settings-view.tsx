@@ -3,6 +3,7 @@
 import { useState, useTransition } from "react";
 import { AppShell } from "@/components/admin/app-shell";
 import { DataModeSwitcher } from "@/components/admin/data-mode-switcher";
+import { DiagnosticsPanel } from "@/components/admin/diagnostics-panel";
 import { usePrefs } from "@/components/admin/prefs-provider";
 import { useToast } from "@/components/admin/toast-provider";
 import { setPrefs } from "@/lib/admin-actions";
@@ -32,7 +33,7 @@ export function SettingsView({ ui, flags, integrations, dataMode, liveConfigured
   const prefs = usePrefs();
   const toast = useToast();
   const [pending, start] = useTransition();
-  const [section, setSection] = useState<"account" | "appearance" | "integrations" | "flags" | "defaults" | "data">("account");
+  const [section, setSection] = useState<"account" | "appearance" | "integrations" | "flags" | "defaults" | "data" | "diagnostics">("account");
 
   const persistTheme = (t: "light" | "dark" | "auto") => {
     prefs.setTheme(t);
@@ -79,6 +80,7 @@ export function SettingsView({ ui, flags, integrations, dataMode, liveConfigured
             ["flags", "Feature Flags"],
             ["defaults", "Defaults"],
             ["data", "Data"],
+            ["diagnostics", "Diagnostics"],
           ] as const).map(([k, label]) => (
             <button
               key={k}
@@ -211,6 +213,8 @@ export function SettingsView({ ui, flags, integrations, dataMode, liveConfigured
               </div>
             </div>
           )}
+
+          {section === "diagnostics" && <DiagnosticsPanel />}
         </div>
       </div>
     </AppShell>

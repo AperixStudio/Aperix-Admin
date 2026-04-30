@@ -6,7 +6,7 @@ import { AppShell } from "@/components/admin/app-shell";
 import { ActionQueueList } from "@/components/admin/action-queue-list";
 import { RenewalsList } from "@/components/admin/renewals-list";
 import { getHealthDotClass } from "@/lib/admin-utils";
-import type { ActionQueueItem, DashboardContent, DashboardStats, ProjectRecord, RenewalItem, UiConfig } from "@/lib/admin-types";
+import type { ActionQueueItem, DashboardContent, DashboardStats, ProjectRecord, ProspectRecord, RenewalItem, UiConfig } from "@/lib/admin-types";
 import type { RecentDeploy } from "@/lib/data/adapter";
 
 type FilterValue = string;
@@ -19,6 +19,7 @@ interface DashboardViewProps {
   actionQueue?: ActionQueueItem[];
   renewals?: RenewalItem[];
   recentDeploys?: RecentDeploy[];
+  prospects?: ProspectRecord[];
   shellExtras?: Record<string, unknown>;
 }
 
@@ -30,6 +31,7 @@ export function DashboardView({
   actionQueue = [],
   renewals = [],
   recentDeploys = [],
+  prospects = [],
   shellExtras = {},
 }: DashboardViewProps) {
   const [currentFilter, setCurrentFilter] = useState<FilterValue>(content.filters[0] ?? "all");
@@ -271,7 +273,40 @@ export function DashboardView({
                   <span>{renewals.length} domain/SSL records tracked.</span>
                 </div>
               </div>
+              <div className="timeline-item">
+                <div className="timeline-node-wrap"><div className="timeline-node" /></div>
+                <div>
+                  <strong>Active prospects</strong>
+                  <span>{prospects.filter((p) => p.status !== "won" && p.status !== "lost").length} leads in pipeline.</span>
+                </div>
+              </div>
             </div>
+          </div>
+
+          <div className="panel section">
+            <div className="panel-head">
+              <h3>Prospects</h3>
+              <Link href="/prospects" className="panel-head-link">Open pipeline →</Link>
+            </div>
+            {prospects.length === 0 ? (
+              <div className="empty-state">
+                No prospects yet. Save leads from <Link href="/onboarding">/onboarding</Link>.
+              </div>
+            ) : (
+              <ul style={{ listStyle: "none", padding: 0, margin: 0, display: "grid", gap: 10 }}>
+                {prospects.slice(0, 5).map((p) => (
+                  <li key={p.id} style={{ display: "flex", justifyContent: "space-between", gap: 10 }}>
+                    <div>
+                      <strong style={{ fontSize: 14 }}>{p.businessName}</strong>
+                      <div className="muted" style={{ fontSize: 12 }}>
+                        {[p.location, p.industry].filter(Boolean).join(" · ") || "—"}
+                      </div>
+                    </div>
+                    <span className={`pill pill-${p.status}`} style={{ alignSelf: "center" }}>{p.status}</span>
+                  </li>
+                ))}
+              </ul>
+            )}
           </div>
         </div>
       </section>

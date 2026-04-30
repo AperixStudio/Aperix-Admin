@@ -11,6 +11,19 @@ interface OnboardingViewProps {
   shellExtras?: Record<string, unknown>;
 }
 
+/**
+ * Onboarding screen — single source of truth for adding records.
+ *
+ * Previously this page had three sections:
+ *   1. The form (works)
+ *   2. A field-group cheatsheet (read-only filler)
+ *   3. A "Future automation" wishlist (purely aspirational)
+ *
+ * (2) duplicated form labels and (3) had no behaviour, so they
+ * were misleading. They have been removed; the form now owns
+ * the screen and supports BOTH client + prospect creation via
+ * a toggle.
+ */
 export function OnboardingView({ ui, content, dataMode, shellExtras = {} }: OnboardingViewProps) {
   return (
     <AppShell
@@ -19,15 +32,14 @@ export function OnboardingView({ ui, content, dataMode, shellExtras = {} }: Onbo
       brandKicker={ui.brandKicker}
       shellTitle={ui.viewTitles.onboarding}
       primaryNav={ui.primaryNav}
-      title={content.title}
-      description={content.description}
+      title="New client / lead"
+      description="Create a real client, or save a prospect we want to reach out to."
       noteTitle={content.noteTitle}
       noteBody={content.noteBody}
       actions={
         <>
-          {(content.actions ?? []).map((a) => (
-            <Link key={a.href} className={`btn${a.primary ? " primary" : ""}`} href={a.href}>{a.label}</Link>
-          ))}
+          <Link className="btn" href="/clients">View clients</Link>
+          <Link className="btn" href="/prospects">View prospects</Link>
         </>
       }
     >
@@ -39,61 +51,33 @@ export function OnboardingView({ ui, content, dataMode, shellExtras = {} }: Onbo
           </div>
 
           <div className="panel section">
-            <h3>Create client</h3>
-            <p className="section-copy">
-              Submits to the active data adapter. In <strong>Live</strong> mode this writes through Supabase;
-              <strong> Mock</strong> and <strong>Empty</strong> modes are read-only.
-            </p>
             <NewClientForm dataMode={dataMode} />
           </div>
-
-          {content.groups.map((group) => (
-            <div key={group.title} className="panel section">
-              <h3>{group.title}</h3>
-              <p className="section-copy">{group.description}</p>
-              <div className="onboarding-fields">
-                {group.fields.map((field) => (
-                  <div key={field.label} className="onboarding-field">
-                    <div className="onboarding-field-label">
-                      {field.label}
-                      {field.required && <span className="onboarding-required">required</span>}
-                    </div>
-                    <div className="onboarding-field-hint">{field.hint}</div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          ))}
         </div>
 
         <div className="stack">
           <div className="panel section">
-            <h3>How to add a new client today</h3>
-            <div className="timeline">
-              {content.nextSteps.map((step) => (
-                <div key={step.title} className="timeline-item">
-                  <div className="timeline-node-wrap"><div className="timeline-node" /></div>
-                  <div>
-                    <strong>{step.title}</strong>
-                    <span>{step.description}</span>
-                  </div>
-                </div>
-              ))}
-            </div>
+            <h3>How the prospect workflow works</h3>
+            <ol className="onboarding-future">
+              <li><strong>Find</strong> — driving Google Maps for businesses with no/old/broken websites.</li>
+              <li><strong>Save</strong> — paste the Maps share link + current site URL into the prospect form.</li>
+              <li><strong>Research</strong> — track status as you assess them (researching → meeting → contacted).</li>
+              <li><strong>Reach out</strong> — cold call with aperix.com.au, or build a quick mock site first.</li>
+              <li><strong>Convert</strong> — when they sign on, promote the prospect to a full client record.</li>
+            </ol>
           </div>
 
           <div className="panel section">
-            <h3>Future automation</h3>
+            <h3>What gets persisted</h3>
             <p className="section-copy">
-              When integrations land, this template becomes the trigger. Submitting it will:
+              Every field on the client form lands in the <code>projects</code> table and surfaces on the
+              Clients list, the Command Center, the per-client detail page, and the Audit log. Tags appear
+              on the Dashboard cards. Live URL drives the &ldquo;Visit site&rdquo; button.
             </p>
-            <ul className="onboarding-future">
-              <li>create the GitHub repo from the chosen starter,</li>
-              <li>register the Netlify site and link the repo,</li>
-              <li>add the domain to Cloudflare and queue DNS records,</li>
-              <li>seed health checks and renewal reminders,</li>
-              <li>and surface the new project across every operations panel.</li>
-            </ul>
+            <p className="section-copy">
+              Prospects live in their own <code>prospects</code> table and appear on the Prospects tab with
+              a simple kanban-style status pipeline.
+            </p>
           </div>
         </div>
       </section>

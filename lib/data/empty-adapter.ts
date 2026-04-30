@@ -1,4 +1,4 @@
-import type { DataAdapter, NewProjectInput } from "@/lib/data/adapter";
+import type { DataAdapter, DiagnosticReport, NewProjectInput, NewProspectInput } from "@/lib/data/adapter";
 
 /**
  * Empty adapter — what a fresh, real install looks like before
@@ -21,4 +21,22 @@ export const emptyAdapter: DataAdapter = {
   createProject: async (_input: NewProjectInput) => {
     throw new Error("Empty mode is read-only. Switch to Live to create real records.");
   },
+  listProspects: async () => [],
+  getProspect: async () => null,
+  createProspect: async (_input: NewProspectInput) => {
+    throw new Error("Empty mode is read-only. Switch to Live to create real records.");
+  },
+  updateProspectStatus: async () => {
+    throw new Error("Empty mode is read-only.");
+  },
+  convertProspectToClient: async () => {
+    throw new Error("Empty mode is read-only.");
+  },
+  runDiagnostics: async (): Promise<DiagnosticReport> => ({
+    generatedAt: new Date().toISOString(),
+    mode: "empty",
+    checks: [
+      { key: "mode", label: "Adapter", status: "ok", detail: "Empty mode — every read returns []." },
+    ],
+  }),
 };

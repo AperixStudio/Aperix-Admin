@@ -12,13 +12,14 @@ export const metadata: Metadata = {
 export default async function DashboardPage() {
   const shell = await getShellProps();
   const adapter = await getAdapter();
-  const [content, projects, stats, actionQueue, renewals, recentDeploys] = await Promise.all([
+  const [content, projects, stats, actionQueue, renewals, recentDeploys, prospects] = await Promise.all([
     getDashboardContent(),
     adapter.listProjects(),
     adapter.getDashboardStats(),
     adapter.getActionQueue(),
     adapter.getUpcomingRenewals(),
     adapter.getRecentDeploys(8),
+    adapter.listProspects(),
   ]);
 
   return (
@@ -30,6 +31,7 @@ export default async function DashboardPage() {
       actionQueue={actionQueue}
       renewals={renewals}
       recentDeploys={recentDeploys}
+      prospects={prospects}
       shellExtras={shell}
     />
   );

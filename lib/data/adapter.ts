@@ -6,6 +6,9 @@ import type {
   ProjectCompleteness,
   DashboardStats,
   DeploymentRecord,
+  ProspectRecord,
+  ProspectStatus,
+  ProspectSource,
 } from "@/lib/admin-types";
 import type { ContractRecord, RunbookEntry, NotificationItem } from "@/lib/admin-schemas";
 
@@ -36,6 +39,51 @@ export interface DataAdapter {
 
   // Writes (mutations) — empty + mock implement; live writes to Supabase
   createProject(input: NewProjectInput): Promise<ProjectRecord>;
+
+  // Prospects (lead generation pipeline)
+  listProspects(): Promise<ProspectRecord[]>;
+  getProspect(id: string): Promise<ProspectRecord | null>;
+  createProspect(input: NewProspectInput): Promise<ProspectRecord>;
+  updateProspectStatus(id: string, status: ProspectStatus): Promise<void>;
+  convertProspectToClient(id: string, project: NewProjectInput): Promise<ProjectRecord>;
+
+  // Diagnostics — used by Settings → Diagnostics. Each row reports
+  // whether a logical resource is reachable. Implementation differs
+  // per adapter (live pings Supabase; mock/empty just summarise).
+  runDiagnostics(): Promise<DiagnosticReport>;
+}
+
+export interface DiagnosticCheck {
+  key: string;
+  label: string;
+  status: "ok" | "warn" | "fail";
+  detail: string;
+  fixHint?: string;
+}
+
+export interface DiagnosticReport {
+  generatedAt: string;
+  mode: "live" | "mock" | "empty";
+  checks: DiagnosticCheck[];
+}
+
+export interface NewProspectInput {
+  businessName: string;
+  mapsUrl?: string;
+  currentSite?: string;
+  notes?: string;
+  source?: ProspectSource;
+  status?: ProspectStatus;
+  priority?: "low" | "medium" | "high";
+  industry?: string;
+  location?: string;
+  contactName?: string;
+  contactEmail?: string;
+  contactPhone?: string;
+  owner?: string;
+  nextAction?: string;
+  nextActionDue?: string;
+  tags?: string[];
 }
 
 export interface NewProjectInput {
@@ -50,4 +98,9 @@ export interface NewProjectInput {
   registrar?: string;
   githubRepo?: string;
   brandKey?: string;
+  // Extended profile (optional — captured at onboarding when known)
+  liveUrl?: string;
+  stagingUrl?: string;
+  notes?: string;
+  tags?: string[];
 }

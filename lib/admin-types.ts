@@ -363,6 +363,48 @@ export interface OperationsContent {
   };
 }
 
+// ── Prospects (lead generation) ──────────────────────────────
+export type ProspectStatus =
+  | "new"
+  | "researching"
+  | "contacted"
+  | "meeting"
+  | "won"
+  | "lost"
+  | "dormant";
+
+export type ProspectSource =
+  | "google-maps"
+  | "referral"
+  | "cold-list"
+  | "event"
+  | "inbound"
+  | "other";
+
+export interface ProspectRecord {
+  id: string;
+  businessName: string;
+  mapsUrl?: string;
+  currentSite?: string;
+  notes?: string;
+  source: ProspectSource;
+  status: ProspectStatus;
+  priority: "low" | "medium" | "high";
+  industry?: string;
+  location?: string;
+  contactName?: string;
+  contactEmail?: string;
+  contactPhone?: string;
+  owner: string;
+  nextAction?: string;
+  nextActionDue?: string;
+  lastContacted?: string;
+  convertedProjectId?: string;
+  tags: string[];
+  createdAt: string;
+  updatedAt: string;
+}
+
 // ── Onboarding template content ──────────────────────────────
 export interface OnboardingFieldGroup {
   title: string;

@@ -1,4 +1,4 @@
-import type { DataAdapter, NewProjectInput, RecentDeploy } from "@/lib/data/adapter";
+import type { DataAdapter, DiagnosticReport, NewProjectInput, NewProspectInput, RecentDeploy } from "@/lib/data/adapter";
 import { getSupabaseAdmin, isSupabaseAdminConfigured } from "@/lib/supabase/admin";
 import type {
   ActionQueueItem,
@@ -14,6 +14,9 @@ import type {
   IncidentNote,
   DeploymentRecord,
   QuickLinkItem,
+  ProspectRecord,
+  ProspectSource,
+  ProspectStatus,
 } from "@/lib/admin-types";
 import type {
   ContractRecord,
@@ -494,6 +497,7 @@ async function createProject(input: NewProjectInput): Promise<ProjectRecord> {
     id: input.id,
     name: input.name,
     summary: input.summary,
+    notes: input.notes ?? "",
     lead: input.lead,
     support: input.support ?? "",
     tier: input.tier,
@@ -502,7 +506,10 @@ async function createProject(input: NewProjectInput): Promise<ProjectRecord> {
     registrar: input.registrar ?? null,
     repo: input.githubRepo ?? null,
     repo_url: input.githubRepo ? `https://github.com/${input.githubRepo}` : null,
+    live_url: input.liveUrl ?? null,
+    staging_url: input.stagingUrl ?? null,
     brand_key: input.brandKey ?? null,
+    tags: input.tags ?? [],
   };
 
   const { data, error } = await supabase
@@ -512,6 +519,237 @@ async function createProject(input: NewProjectInput): Promise<ProjectRecord> {
     .single();
   if (error) throw new Error(`createProject: ${error.message}`);
   return mapProject(data as unknown as ProjectRowWithRelations);
+}
+
+// -------------------------------------------------------------
+// Prospects (lead generation)
+// -------------------------------------------------------------
+
+interface ProspectRow {
+  id: string;
+  business_name: string;
+  maps_url: string | null;
+  current_site: string | null;
+  notes: string | null;
+  source: ProspectSource;
+  status: ProspectStatus;
+  priority: "low" | "medium" | "high";
+  industry: string | null;
+  location: string | null;
+  contact_name: string | null;
+  contact_email: string | null;
+  contact_phone: string | null;
+  owner: string;
+  next_action: string | null;
+  next_action_due: string | null;
+  last_contacted: string | null;
+  converted_project_id: string | null;
+  tags: string[] | null;
+  created_at: string;
+  updated_at: string;
+}
+
+function mapProspect(r: ProspectRow): ProspectRecord {
+  return {
+    id: r.id,
+    businessName: r.business_name,
+    mapsUrl: r.maps_url ?? undefined,
+    currentSite: r.current_site ?? undefined,
+    notes: r.notes ?? undefined,
+    source: r.source,
+    status: r.status,
+    priority: r.priority,
+    industry: r.industry ?? undefined,
+    location: r.location ?? undefined,
+    contactName: r.contact_name ?? undefined,
+    contactEmail: r.contact_email ?? undefined,
+    contactPhone: r.contact_phone ?? undefined,
+    owner: r.owner,
+    nextAction: r.next_action ?? undefined,
+    nextActionDue: r.next_action_due ?? undefined,
+    lastContacted: r.last_contacted ?? undefined,
+    convertedProjectId: r.converted_project_id ?? undefined,
+    tags: r.tags ?? [],
+    createdAt: r.created_at,
+    updatedAt: r.updated_at,
+  };
+}
+
+async function listProspects(): Promise<ProspectRecord[]> {
+  if (!isSupabaseAdminConfigured()) notConfigured();
+  const supabase = getSupabaseAdmin();
+  const { data, error } = await supabase
+    .from("prospects")
+    .select("*")
+    .order("created_at", { ascending: false });
+  if (error) {
+    // Table may not exist yet (migration not applied) — return empty
+    // and let Diagnostics flag it instead of breaking the whole UI.
+    if (/does not exist|relation/i.test(error.message)) return [];
+    throw new Error(`listProspects: ${error.message}`);
+  }
+  return ((data ?? []) as ProspectRow[]).map(mapProspect);
+}
+
+async function getProspect(id: string): Promise<ProspectRecord | null> {
+  if (!isSupabaseAdminConfigured()) notConfigured();
+  const supabase = getSupabaseAdmin();
+  const { data, error } = await supabase
+    .from("prospects")
+    .select("*")
+    .eq("id", id)
+    .maybeSingle();
+  if (error) throw new Error(`getProspect: ${error.message}`);
+  if (!data) return null;
+  return mapProspect(data as ProspectRow);
+}
+
+async function createProspect(input: NewProspectInput): Promise<ProspectRecord> {
+  if (!isSupabaseAdminConfigured()) notConfigured();
+  const supabase = getSupabaseAdmin();
+  const insert = {
+    business_name: input.businessName,
+    maps_url: input.mapsUrl ?? null,
+    current_site: input.currentSite ?? null,
+    notes: input.notes ?? null,
+    source: input.source ?? "google-maps",
+    status: input.status ?? "new",
+    priority: input.priority ?? "medium",
+    industry: input.industry ?? null,
+    location: input.location ?? null,
+    contact_name: input.contactName ?? null,
+    contact_email: input.contactEmail ?? null,
+    contact_phone: input.contactPhone ?? null,
+    owner: input.owner ?? "Harrison",
+    next_action: input.nextAction ?? null,
+    next_action_due: input.nextActionDue ?? null,
+    tags: input.tags ?? [],
+  };
+  const { data, error } = await supabase
+    .from("prospects")
+    .insert(insert)
+    .select("*")
+    .single();
+  if (error) throw new Error(`createProspect: ${error.message}`);
+  return mapProspect(data as ProspectRow);
+}
+
+async function updateProspectStatus(id: string, status: ProspectStatus): Promise<void> {
+  if (!isSupabaseAdminConfigured()) notConfigured();
+  const supabase = getSupabaseAdmin();
+  const patch: Record<string, unknown> = { status };
+  if (status === "contacted") patch.last_contacted = new Date().toISOString();
+  const { error } = await supabase.from("prospects").update(patch).eq("id", id);
+  if (error) throw new Error(`updateProspectStatus: ${error.message}`);
+}
+
+async function convertProspectToClient(id: string, project: NewProjectInput): Promise<ProjectRecord> {
+  const created = await createProject(project);
+  if (!isSupabaseAdminConfigured()) notConfigured();
+  const supabase = getSupabaseAdmin();
+  const { error } = await supabase
+    .from("prospects")
+    .update({ status: "won", converted_project_id: created.id })
+    .eq("id", id);
+  if (error) throw new Error(`convertProspectToClient: ${error.message}`);
+  return created;
+}
+
+// -------------------------------------------------------------
+// Diagnostics
+// -------------------------------------------------------------
+
+async function runDiagnostics(): Promise<DiagnosticReport> {
+  const checks: DiagnosticReport["checks"] = [];
+  const now = new Date().toISOString();
+
+  if (!isSupabaseAdminConfigured()) {
+    checks.push({
+      key: "supabase",
+      label: "Supabase service role",
+      status: "fail",
+      detail: "NEXT_PUBLIC_SUPABASE_URL or SUPABASE_SERVICE_ROLE_KEY is missing.",
+      fixHint: "Set both in .env.local (or Netlify env vars) and redeploy with cache cleared.",
+    });
+    return { generatedAt: now, mode: "live", checks };
+  }
+  checks.push({
+    key: "supabase",
+    label: "Supabase service role",
+    status: "ok",
+    detail: "Service role key is configured.",
+  });
+
+  const supabase = getSupabaseAdmin();
+  const TABLES: { table: string; label: string; hint?: string }[] = [
+    { table: "projects", label: "projects table" },
+    { table: "contacts", label: "contacts table" },
+    { table: "credentials", label: "credentials table" },
+    { table: "tasks", label: "tasks table" },
+    { table: "incidents", label: "incidents table" },
+    { table: "deployments", label: "deployments table" },
+    { table: "quick_links", label: "quick_links table" },
+    { table: "contracts", label: "contracts table" },
+    { table: "runbooks", label: "runbooks table" },
+    { table: "notifications", label: "notifications table" },
+    { table: "audit_log", label: "audit_log table" },
+    { table: "changelog", label: "changelog table" },
+    {
+      table: "prospects",
+      label: "prospects table",
+      hint: "Apply supabase/migrations/0003_prospects.sql in the Supabase SQL editor.",
+    },
+  ];
+
+  for (const t of TABLES) {
+    try {
+      const { error, count } = await supabase
+        .from(t.table)
+        .select("*", { count: "exact", head: true });
+      if (error) {
+        if (/does not exist|relation/i.test(error.message)) {
+          checks.push({
+            key: t.table,
+            label: t.label,
+            status: "fail",
+            detail: `Table missing: ${error.message}`,
+            fixHint: t.hint ?? `Run all SQL in supabase/migrations/ via the Supabase SQL editor.`,
+          });
+        } else if (/permission denied|not authorized/i.test(error.message)) {
+          checks.push({
+            key: t.table,
+            label: t.label,
+            status: "fail",
+            detail: error.message,
+            fixHint: "Run supabase/migrations/0002_grants.sql to grant service_role.",
+          });
+        } else {
+          checks.push({
+            key: t.table,
+            label: t.label,
+            status: "warn",
+            detail: error.message,
+          });
+        }
+      } else {
+        checks.push({
+          key: t.table,
+          label: t.label,
+          status: "ok",
+          detail: `${count ?? 0} row${count === 1 ? "" : "s"}.`,
+        });
+      }
+    } catch (e) {
+      checks.push({
+        key: t.table,
+        label: t.label,
+        status: "fail",
+        detail: e instanceof Error ? e.message : String(e),
+      });
+    }
+  }
+
+  return { generatedAt: now, mode: "live", checks };
 }
 
 // -------------------------------------------------------------
@@ -532,4 +770,10 @@ export const liveAdapter: DataAdapter = {
   getProjectCompleteness,
   getRecentDeploys,
   createProject,
+  listProspects,
+  getProspect,
+  createProspect,
+  updateProspectStatus,
+  convertProspectToClient,
+  runDiagnostics,
 };

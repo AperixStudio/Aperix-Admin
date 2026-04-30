@@ -307,14 +307,21 @@ const NewClientInput = z.object({
   registrar: z.string().optional(),
   githubRepo: z.string().optional(),
   brandKey: z.string().optional(),
+  liveUrl: z.string().optional(),
+  stagingUrl: z.string().optional(),
+  notes: z.string().optional(),
+  tags: z.string().optional(), // comma-separated
 });
 
 export async function createClient(_prev: unknown, formData: FormData) {
   try {
     const parsed = NewClientInput.parse(Object.fromEntries(formData.entries()));
+    const tags = parsed.tags
+      ? parsed.tags.split(",").map((s) => s.trim()).filter(Boolean)
+      : undefined;
     const { getAdapter } = await import("@/lib/data");
     const adapter = await getAdapter();
-    const created = await adapter.createProject(parsed);
+    const created = await adapter.createProject({ ...parsed, tags });
     await logAudit({
       action: "create",
       entityType: "project",
@@ -328,6 +335,77 @@ export async function createClient(_prev: unknown, formData: FormData) {
   } catch (e) {
     return { ok: false as const, error: e instanceof Error ? e.message : "Failed to create client." };
   }
+}
+
+// ── Prospects (lead generation) ──────────────────────────────
+const NewProspectInput = z.object({
+  businessName: z.string().min(2),
+  mapsUrl: z.string().optional(),
+  currentSite: z.string().optional(),
+  notes: z.string().optional(),
+  source: z.enum(["google-maps", "referral", "cold-list", "event", "inbound", "other"]).default("google-maps"),
+  status: z.enum(["new", "researching", "contacted", "meeting", "won", "lost", "dormant"]).default("new"),
+  priority: z.enum(["low", "medium", "high"]).default("medium"),
+  industry: z.string().optional(),
+  location: z.string().optional(),
+  contactName: z.string().optional(),
+  contactEmail: z.string().optional(),
+  contactPhone: z.string().optional(),
+  owner: z.string().optional(),
+  nextAction: z.string().optional(),
+  nextActionDue: z.string().optional(),
+  tags: z.string().optional(), // comma-separated
+});
+
+export async function createProspect(_prev: unknown, formData: FormData) {
+  try {
+    const parsed = NewProspectInput.parse(Object.fromEntries(formData.entries()));
+    const tags = parsed.tags
+      ? parsed.tags.split(",").map((s) => s.trim()).filter(Boolean)
+      : undefined;
+    const { getAdapter } = await import("@/lib/data");
+    const adapter = await getAdapter();
+    const created = await adapter.createProspect({ ...parsed, tags });
+    await logAudit({
+      action: "create",
+      entityType: "prospect",
+      entityId: created.id,
+      after: { businessName: created.businessName, status: created.status },
+      note: `Created via onboarding form (mode=${adapter.mode})`,
+    });
+    revalidatePath("/prospects");
+    revalidatePath("/onboarding");
+    revalidatePath("/");
+    return { ok: true as const, id: created.id, businessName: created.businessName };
+  } catch (e) {
+    return { ok: false as const, error: e instanceof Error ? e.message : "Failed to create prospect." };
+  }
+}
+
+const ProspectStatusInput = z.object({
+  id: z.string().min(1),
+  status: z.enum(["new", "researching", "contacted", "meeting", "won", "lost", "dormant"]),
+});
+
+export async function setProspectStatus(formData: FormData) {
+  const parsed = ProspectStatusInput.parse(Object.fromEntries(formData.entries()));
+  const { getAdapter } = await import("@/lib/data");
+  const adapter = await getAdapter();
+  await adapter.updateProspectStatus(parsed.id, parsed.status);
+  await logAudit({
+    action: "update",
+    entityType: "prospect",
+    entityId: parsed.id,
+    note: `status → ${parsed.status}`,
+  });
+  revalidatePath("/prospects");
+}
+
+// ── Diagnostics ──────────────────────────────────────────────
+export async function runDiagnostics() {
+  const { getAdapter } = await import("@/lib/data");
+  const adapter = await getAdapter();
+  return adapter.runDiagnostics();
 }
 
 // ── Prefs ────────────────────────────────────────────────────
