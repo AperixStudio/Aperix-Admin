@@ -10,9 +10,9 @@ export const metadata: Metadata = {
 };
 
 export default async function DashboardPage() {
-  const shell = await getShellProps();
   const adapter = await getAdapter();
-  const [content, projects, stats, actionQueue, renewals, recentDeploys, prospects] = await Promise.all([
+  const [shell, content, projects, stats, actionQueue, renewals, recentDeploys, prospects] = await Promise.all([
+    getShellProps(),
     getDashboardContent(),
     adapter.listProjects(),
     adapter.getDashboardStats(),

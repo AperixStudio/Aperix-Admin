@@ -6,6 +6,12 @@ import { useEffect, useState } from "react";
 import { NavSection } from "@/components/admin/nav-section";
 import type { ViewKey } from "@/lib/admin-types";
 
+type IdleWindow = Window &
+  typeof globalThis & {
+    requestIdleCallback?: (callback: IdleRequestCallback, options?: IdleRequestOptions) => number;
+    cancelIdleCallback?: (handle: number) => void;
+  };
+
 interface SectionLink {
   label: string;
   href: string;
@@ -113,7 +119,18 @@ export function Sidebar({ brandKicker, shellTitle, unreadCount, noteTitle, noteB
   const [mobileOpen, setMobileOpen] = useState(false);
 
   useEffect(() => {
-    for (const href of NAV_PREFETCH_HREFS) router.prefetch(href);
+    const win = window as IdleWindow;
+    const prefetch = () => {
+      for (const href of NAV_PREFETCH_HREFS) router.prefetch(href);
+    };
+
+    if (win.requestIdleCallback) {
+      const id = win.requestIdleCallback(prefetch, { timeout: 1500 });
+      return () => win.cancelIdleCallback?.(id);
+    }
+
+    const id = win.setTimeout(prefetch, 750);
+    return () => win.clearTimeout(id);
   }, [router]);
 
   // Close mobile drawer whenever route changes.

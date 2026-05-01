@@ -1,3 +1,4 @@
+import { cache } from "react";
 import type { DataAdapter, DiagnosticReport, NewProjectInput, NewProspectInput, RecentDeploy } from "@/lib/data/adapter";
 import { getSupabaseAdmin, isSupabaseAdminConfigured } from "@/lib/supabase/admin";
 import type {
@@ -226,7 +227,7 @@ const PROJECT_EMBED =
 // Reads
 // -------------------------------------------------------------
 
-async function listProjects(): Promise<ProjectRecord[]> {
+const listProjects = cache(async function listProjects(): Promise<ProjectRecord[]> {
   if (!isSupabaseAdminConfigured()) notConfigured();
   const supabase = getSupabaseAdmin();
   const { data, error } = await supabase
@@ -235,7 +236,7 @@ async function listProjects(): Promise<ProjectRecord[]> {
     .order("name");
   if (error) throw new Error(`listProjects: ${error.message}`);
   return ((data ?? []) as unknown as ProjectRowWithRelations[]).map(mapProject);
-}
+});
 
 async function getProject(id: string): Promise<ProjectRecord | null> {
   if (!isSupabaseAdminConfigured()) notConfigured();
@@ -303,7 +304,7 @@ async function listRunbooks(): Promise<RunbookEntry[]> {
   }));
 }
 
-async function listNotifications(): Promise<NotificationItem[]> {
+const listNotifications = cache(async function listNotifications(): Promise<NotificationItem[]> {
   if (!isSupabaseAdminConfigured()) notConfigured();
   const supabase = getSupabaseAdmin();
   const { data, error } = await supabase
@@ -325,7 +326,7 @@ async function listNotifications(): Promise<NotificationItem[]> {
     href: n.href ?? undefined,
     read: n.read ?? false,
   }));
-}
+});
 
 // -------------------------------------------------------------
 // Derived helpers

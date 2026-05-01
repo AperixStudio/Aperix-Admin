@@ -1,3 +1,4 @@
+import { cache } from "react";
 import { getUiConfig } from "@/lib/admin-data";
 import { getSession } from "@/lib/auth";
 import { getAdapter } from "@/lib/data";
@@ -5,7 +6,7 @@ import { getDataMode, isLiveConfigured } from "@/lib/data-mode";
 import { buildSearchIndex } from "@/lib/search";
 
 /** One call to assemble shared topbar/sidebar data for any AppShell. */
-export async function getShellProps() {
+export const getShellProps = cache(async function getShellProps() {
   const adapter = await getAdapter();
   const [ui, projects, notifications, session, mode] = await Promise.all([
     getUiConfig(),
@@ -24,4 +25,4 @@ export async function getShellProps() {
     dataMode: mode,
     liveConfigured: isLiveConfigured(),
   };
-}
+});
