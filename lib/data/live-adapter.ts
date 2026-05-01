@@ -1,5 +1,5 @@
 import { cache } from "react";
-import type { DataAdapter, DiagnosticReport, NewProjectInput, NewProspectInput, RecentDeploy } from "@/lib/data/adapter";
+import type { DataAdapter, DiagnosticReport, NewProjectInput, NewProspectInput, ProjectSummary, RecentDeploy } from "@/lib/data/adapter";
 import { getSupabaseAdmin, isSupabaseAdminConfigured } from "@/lib/supabase/admin";
 import type {
   ActionQueueItem,
@@ -236,6 +236,32 @@ const listProjects = cache(async function listProjects(): Promise<ProjectRecord[
     .order("name");
   if (error) throw new Error(`listProjects: ${error.message}`);
   return ((data ?? []) as unknown as ProjectRowWithRelations[]).map(mapProject);
+});
+
+const listProjectSummaries = cache(async function listProjectSummaries(): Promise<ProjectSummary[]> {
+  if (!isSupabaseAdminConfigured()) notConfigured();
+  const supabase = getSupabaseAdmin();
+  const { data, error } = await supabase
+    .from("projects")
+    .select("id,name,domain,tier,lead,tags")
+    .order("name");
+  if (error) throw new Error(`listProjectSummaries: ${error.message}`);
+  type Row = {
+    id: string;
+    name: string;
+    domain: string | null;
+    tier: string | null;
+    lead: string | null;
+    tags: string[] | null;
+  };
+  return ((data ?? []) as Row[]).map((p) => ({
+    id: p.id,
+    name: p.name,
+    domain: p.domain ?? undefined,
+    tier: p.tier ?? undefined,
+    lead: p.lead ?? undefined,
+    tags: p.tags ?? [],
+  }));
 });
 
 async function getProject(id: string): Promise<ProjectRecord | null> {
@@ -760,6 +786,7 @@ async function runDiagnostics(): Promise<DiagnosticReport> {
 export const liveAdapter: DataAdapter = {
   mode: "live",
   listProjects,
+  listProjectSummaries,
   getProject,
   listContracts,
   listRunbooks,

@@ -14,6 +14,15 @@ import type { ContractRecord, RunbookEntry, NotificationItem } from "@/lib/admin
 
 export type RecentDeploy = DeploymentRecord & { projectId: string; projectName: string };
 
+export interface ProjectSummary {
+  id: string;
+  name: string;
+  domain?: string;
+  tier?: string;
+  lead?: string;
+  tags?: string[];
+}
+
 /**
  * The single contract every data source must satisfy.
  * mock = JSON files, empty = always [], live = Supabase.
@@ -24,6 +33,7 @@ export interface DataAdapter {
 
   // Reads
   listProjects(): Promise<ProjectRecord[]>;
+  listProjectSummaries(): Promise<ProjectSummary[]>;
   getProject(id: string): Promise<ProjectRecord | null>;
   listContracts(): Promise<ContractRecord[]>;
   listRunbooks(): Promise<RunbookEntry[]>;

@@ -1,4 +1,5 @@
 import type { ProjectRecord } from "@/lib/admin-types";
+import type { ProjectSummary } from "@/lib/data/adapter";
 
 export interface SearchHit {
   id: string;
@@ -69,6 +70,17 @@ export function buildSearchIndex(projects: ProjectRecord[]): SearchHit[] {
   }
 
   return hits;
+}
+
+export function buildProjectSummarySearchIndex(projects: ProjectSummary[]): SearchHit[] {
+  return projects.map((p) => ({
+    id: p.id,
+    kind: "project",
+    title: p.name,
+    subtitle: [p.domain, p.tier].filter(Boolean).join(" · ") || "Client",
+    href: `/clients/${p.id}`,
+    haystack: `${p.name} ${p.domain ?? ""} ${p.tier ?? ""} ${p.lead ?? ""} ${(p.tags ?? []).join(" ")}`.toLowerCase(),
+  }));
 }
 
 /** Lightweight ranked match. Returns a score 0..n; higher is better. */

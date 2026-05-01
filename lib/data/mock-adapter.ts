@@ -41,6 +41,15 @@ const PROSPECTS: ProspectRecord[] = [
 export const mockAdapter: DataAdapter = {
   mode: "mock",
   listProjects: () => getProjects(),
+  listProjectSummaries: async () =>
+    (await getProjects()).map((p) => ({
+      id: p.id,
+      name: p.name,
+      domain: p.domain,
+      tier: p.tier,
+      lead: p.lead,
+      tags: p.tags,
+    })),
   getProject: async (id) => (await getProjectById(id)) ?? null,
   listContracts: () => getContracts(),
   listRunbooks: () => getRunbooks(),

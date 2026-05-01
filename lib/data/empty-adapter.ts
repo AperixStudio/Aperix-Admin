@@ -8,6 +8,7 @@ import type { DataAdapter, DiagnosticReport, NewProjectInput, NewProspectInput }
 export const emptyAdapter: DataAdapter = {
   mode: "empty",
   listProjects: async () => [],
+  listProjectSummaries: async () => [],
   getProject: async () => null,
   listContracts: async () => [],
   listRunbooks: async () => [],
