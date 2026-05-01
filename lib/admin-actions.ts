@@ -342,6 +342,64 @@ export async function setProspectStatus(formData: FormData) {
     note: `status → ${parsed.status}`,
   });
   revalidatePath("/prospects");
+  revalidatePath("/");
+}
+
+const ProspectUpdateInput = z.object({
+  id: z.string().min(1),
+  businessName: z.string().min(2),
+  mapsUrl: optStr,
+  currentSite: optStr,
+  notes: optStr,
+  priority: z.enum(["low", "medium", "high"]).default("medium"),
+  industry: optStr,
+  location: optStr,
+  contactName: optStr,
+  contactEmail: optStr,
+  contactPhone: optStr,
+  owner: optStr,
+  nextAction: optStr,
+  nextActionDue: optStr,
+  tags: optStr,
+});
+
+export async function updateProspect(_prev: unknown, formData: FormData) {
+  try {
+    const parsed = ProspectUpdateInput.parse(Object.fromEntries(formData.entries()));
+    const { id, ...rest } = parsed;
+    const tags = rest.tags
+      ? rest.tags.split(",").map((s) => s.trim()).filter(Boolean)
+      : [];
+    const { getAdapter } = await import("@/lib/data");
+    const adapter = await getAdapter();
+    const updated = await adapter.updateProspect(id, { ...rest, tags });
+    await logAudit({
+      action: "update",
+      entityType: "prospect",
+      entityId: id,
+      after: { businessName: updated.businessName, priority: updated.priority },
+    });
+    revalidatePath("/prospects");
+    revalidatePath("/");
+    return { ok: true as const, businessName: updated.businessName };
+  } catch (e) {
+    return { ok: false as const, error: e instanceof Error ? e.message : "Failed to update prospect." };
+  }
+}
+
+export async function deleteProspect(formData: FormData) {
+  const id = formData.get("id") as string;
+  if (!id) throw new Error("Missing prospect id");
+  const { getAdapter } = await import("@/lib/data");
+  const adapter = await getAdapter();
+  await adapter.deleteProspect(id);
+  await logAudit({
+    action: "delete",
+    entityType: "prospect",
+    entityId: id,
+  });
+  revalidatePath("/prospects");
+  revalidatePath("/");
 }
 
 // ── Diagnostics ──────────────────────────────────────────────

@@ -2749,6 +2749,103 @@ kbd {
 }
 .prospect-column h3 { font-size: 16px; margin-bottom: 10px; }
 .prospect-card { padding: 14px; }
+.prospect-card-closed { opacity: 0.85; }
+
+/* ── Closed list (horizontal wrap instead of vertical) ── */
+.prospect-closed-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 12px;
+}
+
+/* ── Status chips (move-to buttons on each card) ─────── */
+.prospect-chips {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 5px;
+  margin-top: 12px;
+}
+.chips-label {
+  font-size: 11px;
+  color: var(--agency-muted);
+  margin-right: 2px;
+}
+.prospect-chip {
+  font-size: 11px;
+  font-weight: 600;
+  padding: 3px 9px;
+  border-radius: 999px;
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: opacity 0.15s, transform 0.1s;
+  line-height: 1.5;
+}
+.prospect-chip:hover:not(:disabled) { opacity: 0.8; transform: scale(1.04); }
+.prospect-chip:disabled { opacity: 0.5; cursor: not-allowed; }
+.chip-new         { background: rgba(10,132,255,0.12);  color: #0066cc;  border-color: rgba(10,132,255,0.25); }
+.chip-researching { background: rgba(167,139,250,0.18); color: #6d28d9;  border-color: rgba(167,139,250,0.3); }
+.chip-contacted   { background: rgba(245,158,11,0.18);  color: #92400e;  border-color: rgba(245,158,11,0.3); }
+.chip-meeting     { background: rgba(22,163,74,0.18);   color: #15803d;  border-color: rgba(22,163,74,0.3); }
+.chip-won         { background: rgba(22,163,74,0.22);   color: #14532d;  border-color: rgba(22,163,74,0.35); }
+.chip-lost        { background: rgba(220,38,38,0.18);   color: #991b1b;  border-color: rgba(220,38,38,0.3); }
+.chip-dormant     { background: rgba(98,113,128,0.18);  color: #475569;  border-color: rgba(98,113,128,0.3); }
+
+/* ── Edit / Delete action buttons on each card ────────── */
+.prospect-actions-row {
+  display: flex;
+  gap: 8px;
+  margin-top: 8px;
+}
+.btn-icon {
+  font-size: 11px;
+  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--agency-border);
+  background: transparent;
+  color: var(--agency-muted);
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+}
+.btn-icon:hover { background: var(--agency-surface); color: var(--agency-text); }
+.btn-icon-danger:hover { background: rgba(220,38,38,0.10); color: #991b1b; border-color: rgba(220,38,38,0.3); }
+
+/* ── Inline panels (edit form + delete confirm) ────────── */
+.prospect-inline-panel {
+  margin-top: 12px;
+  padding: 14px;
+  border: 1px solid var(--agency-border);
+  border-radius: var(--radius-md);
+  background: var(--agency-surface);
+}
+.delete-confirm p { font-size: 13px; margin: 0 0 12px; }
+.btn.danger {
+  background: rgba(220,38,38,0.12);
+  color: #991b1b;
+  border: 1px solid rgba(220,38,38,0.3);
+}
+.btn.danger:hover { background: rgba(220,38,38,0.22); }
+
+/* ── Edit form grid ──────────────────────────────────────── */
+.prospect-edit-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+@media (max-width: 640px) {
+  .prospect-edit-grid { grid-template-columns: 1fr; }
+}
+.prospect-edit-form textarea {
+  width: 100%;
+  border: 1px solid var(--agency-border);
+  background: var(--agency-bg);
+  color: var(--agency-text);
+  border-radius: var(--radius-md);
+  padding: 8px 10px;
+  font: inherit;
+  resize: vertical;
+}
 
 .pill { padding: 6px 10px; border-radius: 999px; font-size: 12px; font-weight: 700; }
 .pill-new         { background: rgba(10,132,255,0.12);  color: #0066cc; }

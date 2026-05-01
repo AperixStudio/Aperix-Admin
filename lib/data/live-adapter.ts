@@ -672,6 +672,41 @@ async function updateProspectStatus(id: string, status: ProspectStatus): Promise
   if (error) throw new Error(`updateProspectStatus: ${error.message}`);
 }
 
+async function updateProspect(id: string, patch: import("@/lib/data/adapter").ProspectPatch): Promise<ProspectRecord> {
+  if (!isSupabaseAdminConfigured()) notConfigured();
+  const supabase = getSupabaseAdmin();
+  const update: Record<string, unknown> = {};
+  if (patch.businessName !== undefined) update.business_name = patch.businessName;
+  if (patch.mapsUrl !== undefined) update.maps_url = ns(patch.mapsUrl);
+  if (patch.currentSite !== undefined) update.current_site = ns(patch.currentSite);
+  if (patch.notes !== undefined) update.notes = ns(patch.notes);
+  if (patch.priority !== undefined) update.priority = patch.priority;
+  if (patch.industry !== undefined) update.industry = ns(patch.industry);
+  if (patch.location !== undefined) update.location = ns(patch.location);
+  if (patch.contactName !== undefined) update.contact_name = ns(patch.contactName);
+  if (patch.contactEmail !== undefined) update.contact_email = ns(patch.contactEmail);
+  if (patch.contactPhone !== undefined) update.contact_phone = ns(patch.contactPhone);
+  if (patch.owner !== undefined) update.owner = patch.owner || "Harrison";
+  if (patch.nextAction !== undefined) update.next_action = ns(patch.nextAction);
+  if (patch.nextActionDue !== undefined) update.next_action_due = ns(patch.nextActionDue);
+  if (patch.tags !== undefined) update.tags = patch.tags;
+  const { data, error } = await supabase
+    .from("prospects")
+    .update(update)
+    .eq("id", id)
+    .select("*")
+    .single();
+  if (error) throw new Error(`updateProspect: ${error.message}`);
+  return mapProspect(data as ProspectRow);
+}
+
+async function deleteProspect(id: string): Promise<void> {
+  if (!isSupabaseAdminConfigured()) notConfigured();
+  const supabase = getSupabaseAdmin();
+  const { error } = await supabase.from("prospects").delete().eq("id", id);
+  if (error) throw new Error(`deleteProspect: ${error.message}`);
+}
+
 async function convertProspectToClient(id: string, project: NewProjectInput): Promise<ProjectRecord> {
   const created = await createProject(project);
   if (!isSupabaseAdminConfigured()) notConfigured();
@@ -961,6 +996,8 @@ export const liveAdapter: DataAdapter = {
   getProspect,
   createProspect,
   updateProspectStatus,
+  updateProspect,
+  deleteProspect,
   convertProspectToClient,
   createTask,
   updateTaskStatus,

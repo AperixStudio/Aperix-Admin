@@ -59,6 +59,8 @@ export interface DataAdapter {
   getProspect(id: string): Promise<ProspectRecord | null>;
   createProspect(input: NewProspectInput): Promise<ProspectRecord>;
   updateProspectStatus(id: string, status: ProspectStatus): Promise<void>;
+  updateProspect(id: string, patch: ProspectPatch): Promise<ProspectRecord>;
+  deleteProspect(id: string): Promise<void>;
   convertProspectToClient(id: string, project: NewProjectInput): Promise<ProjectRecord>;
 
   // Sub-entity mutations — live writes to Supabase; mock/empty write to JSON files.
@@ -101,6 +103,23 @@ export interface NewProspectInput {
   notes?: string;
   source?: ProspectSource;
   status?: ProspectStatus;
+  priority?: "low" | "medium" | "high";
+  industry?: string;
+  location?: string;
+  contactName?: string;
+  contactEmail?: string;
+  contactPhone?: string;
+  owner?: string;
+  nextAction?: string;
+  nextActionDue?: string;
+  tags?: string[];
+}
+
+export interface ProspectPatch {
+  businessName?: string;
+  mapsUrl?: string;
+  currentSite?: string;
+  notes?: string;
   priority?: "low" | "medium" | "high";
   industry?: string;
   location?: string;

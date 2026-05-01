@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { AppShell } from "@/components/admin/app-shell";
 import { EmptyState } from "@/components/admin/empty-state";
-import { ProspectStatusButtons } from "@/components/admin/prospect-status-buttons";
+import { ProspectCrud } from "@/components/admin/prospect-crud";
 import { getAdapter } from "@/lib/data";
 import { getShellProps } from "@/lib/shell-data";
 import type { ProspectStatus } from "@/lib/admin-types";
@@ -23,6 +23,7 @@ const STATUS_LABEL: Record<ProspectStatus, string> = {
 };
 
 const PIPELINE: ProspectStatus[] = ["new", "researching", "contacted", "meeting"];
+const CLOSED: ProspectStatus[] = ["won", "lost", "dormant"];
 
 export default async function ProspectsPage() {
   const shell = await getShellProps();
@@ -34,6 +35,8 @@ export default async function ProspectsPage() {
   };
   for (const p of prospects) grouped[p.status].push(p);
 
+  const closedCount = CLOSED.reduce((n, s) => n + grouped[s].length, 0);
+
   return (
     <AppShell
       {...shell}
@@ -43,7 +46,7 @@ export default async function ProspectsPage() {
       brandKicker="Records"
       shellTitle="Prospects"
       noteTitle="Working the pipeline"
-      noteBody="Move cards along as you research, contact, meet, then convert."
+      noteBody="Move cards along as you research, contact, meet, then convert. Use ✏️ Edit on any card to update details."
       actions={
         <Link className="btn primary" href="/onboarding">+ New prospect</Link>
       }
@@ -83,20 +86,10 @@ export default async function ProspectsPage() {
                         ) : null}
                         <div className="badges" style={{ marginTop: 10 }}>
                           {p.mapsUrl ? (
-                            <a
-                              className="badge"
-                              href={p.mapsUrl}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                            >📍 Maps</a>
+                            <a className="badge" href={p.mapsUrl} target="_blank" rel="noopener noreferrer">📍 Maps</a>
                           ) : null}
                           {p.currentSite ? (
-                            <a
-                              className="badge"
-                              href={p.currentSite}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                            >🔗 Current site</a>
+                            <a className="badge" href={p.currentSite} target="_blank" rel="noopener noreferrer">🔗 Current site</a>
                           ) : null}
                           {p.contactPhone ? (
                             <a className="badge" href={`tel:${p.contactPhone}`}>📞 {p.contactPhone}</a>
@@ -110,7 +103,10 @@ export default async function ProspectsPage() {
                             <strong>Next:</strong> {p.nextAction}{p.nextActionDue ? ` · ${p.nextActionDue}` : ""}
                           </p>
                         ) : null}
-                        <ProspectStatusButtons id={p.id} current={p.status} />
+                        {p.owner ? (
+                          <p className="muted" style={{ fontSize: 11, marginTop: 6 }}>Owner: {p.owner}</p>
+                        ) : null}
+                        <ProspectCrud prospect={p} />
                       </article>
                     ))}
                   </div>
@@ -119,24 +115,34 @@ export default async function ProspectsPage() {
             ))}
           </section>
 
-          {(grouped.won.length + grouped.lost.length + grouped.dormant.length) > 0 ? (
+          {closedCount > 0 ? (
             <section className="panel section" style={{ marginTop: 18 }}>
-              <h3>Closed</h3>
-              <table className="table">
-                <thead>
-                  <tr><th>Business</th><th>Status</th><th>Owner</th><th>Notes</th></tr>
-                </thead>
-                <tbody>
-                  {[...grouped.won, ...grouped.lost, ...grouped.dormant].map((p) => (
-                    <tr key={p.id}>
-                      <td>{p.businessName}</td>
-                      <td><span className={`pill pill-${p.status}`}>{STATUS_LABEL[p.status]}</span></td>
-                      <td>{p.owner}</td>
-                      <td className="muted">{p.notes ?? "—"}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+              <h3>Closed <span className="muted">({closedCount})</span></h3>
+              <div className="card-list prospect-closed-list" style={{ marginTop: 10 }}>
+                {CLOSED.flatMap((s) =>
+                  grouped[s].map((p) => (
+                    <article key={p.id} className="site-card prospect-card prospect-card-closed">
+                      <div className="card-head">
+                        <div>
+                          <h4 className="card-title">{p.businessName}</h4>
+                          {(p.location || p.industry) ? (
+                            <p className="card-sub">{[p.industry, p.location].filter(Boolean).join(" · ")}</p>
+                          ) : null}
+                        </div>
+                        <div style={{ display: "flex", gap: 6, alignItems: "center" }}>
+                          <span className={`pill pill-${p.status}`}>{STATUS_LABEL[p.status]}</span>
+                          <span className={`badge prio-${p.priority}`}>{p.priority}</span>
+                        </div>
+                      </div>
+                      {p.notes ? (
+                        <p className="card-sub" style={{ marginTop: 8 }}>{p.notes}</p>
+                      ) : null}
+                      <p className="muted" style={{ fontSize: 11, marginTop: 6 }}>Owner: {p.owner}</p>
+                      <ProspectCrud prospect={p} />
+                    </article>
+                  ))
+                )}
+              </div>
             </section>
           ) : null}
         </>

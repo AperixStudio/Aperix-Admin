@@ -30,6 +30,8 @@ export const emptyAdapter: DataAdapter = {
   updateProspectStatus: async () => {
     throw new Error("Empty mode is read-only.");
   },
+  updateProspect: async () => { throw new Error("Empty mode is read-only."); },
+  deleteProspect: async () => { throw new Error("Empty mode is read-only."); },
   convertProspectToClient: async () => {
     throw new Error("Empty mode is read-only.");
   },

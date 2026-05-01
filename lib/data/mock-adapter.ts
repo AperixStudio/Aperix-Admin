@@ -73,6 +73,12 @@ export const mockAdapter: DataAdapter = {
   updateProspectStatus: async (_id: string, _status: ProspectStatus) => {
     throw new Error("Mock mode is read-only. Switch to Live to update prospects.");
   },
+  updateProspect: async (_id: string) => {
+    throw new Error("Mock mode is read-only. Switch to Live to update prospects.");
+  },
+  deleteProspect: async () => {
+    throw new Error("Mock mode is read-only. Switch to Live to delete prospects.");
+  },
   convertProspectToClient: async () => {
     throw new Error("Mock mode is read-only. Switch to Live to convert.");
   },
