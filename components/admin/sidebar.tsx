@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { NavSection } from "@/components/admin/nav-section";
 import type { ViewKey } from "@/lib/admin-types";
@@ -42,7 +42,7 @@ function buildSections(unread: number): NavSectionDef[] {
       collapsible: true,
       items: [
         { label: "Clients", href: "/clients", key: "client" },
-        { label: "Prospects", href: "/prospects", key: "prospects" as ViewKey },
+        { label: "Prospects", href: "/prospects", key: "prospects" },
         { label: "Repos", href: "/repos", key: "repo" },
         { label: "Contracts", href: "/contracts", key: "contracts" },
         { label: "Runbooks", href: "/runbooks", key: "runbooks" },
@@ -70,11 +70,28 @@ function buildSections(unread: number): NavSectionDef[] {
   ];
 }
 
-function activeKeyForPath(pathname: string): ViewKey | "prospects" {
+const NAV_PREFETCH_HREFS = [
+  "/",
+  "/notifications",
+  "/clients",
+  "/prospects",
+  "/repos",
+  "/contracts",
+  "/runbooks",
+  "/timeline",
+  "/metrics",
+  "/dependencies",
+  "/audit",
+  "/ai",
+  "/onboarding",
+  "/settings",
+];
+
+function activeKeyForPath(pathname: string): ViewKey {
   if (pathname === "/") return "dashboard";
   if (pathname.startsWith("/notifications")) return "notifications";
   if (pathname.startsWith("/clients")) return "client";
-  if (pathname.startsWith("/prospects")) return "prospects" as ViewKey;
+  if (pathname.startsWith("/prospects")) return "prospects";
   if (pathname.startsWith("/repos")) return "repo";
   if (pathname.startsWith("/contracts")) return "contracts";
   if (pathname.startsWith("/runbooks")) return "runbooks";
@@ -89,10 +106,15 @@ function activeKeyForPath(pathname: string): ViewKey | "prospects" {
 }
 
 export function Sidebar({ brandKicker, shellTitle, unreadCount, noteTitle, noteBody }: SidebarProps) {
+  const router = useRouter();
   const pathname = usePathname() ?? "/";
   const activeKey = activeKeyForPath(pathname);
   const sections = buildSections(unreadCount);
   const [mobileOpen, setMobileOpen] = useState(false);
+
+  useEffect(() => {
+    for (const href of NAV_PREFETCH_HREFS) router.prefetch(href);
+  }, [router]);
 
   // Close mobile drawer whenever route changes.
   useEffect(() => { setMobileOpen(false); }, [pathname]);
@@ -152,6 +174,7 @@ export function Sidebar({ brandKicker, shellTitle, unreadCount, noteTitle, noteB
                     <Link
                       key={item.href}
                       href={item.href}
+                      prefetch
                       className={`nav-item ${activeKey === item.key ? "active" : ""}`}
                     >
                       <span>{item.label}</span>

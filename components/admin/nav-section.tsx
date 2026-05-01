@@ -46,6 +46,7 @@ export function NavSection({ label, items, activeKey, storageKey }: Props) {
             <Link
               key={item.href}
               href={item.href}
+              prefetch
               className={`nav-item ${activeKey === item.key ? "active" : ""}`}
             >
               <span>{item.label}</span>

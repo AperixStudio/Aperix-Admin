@@ -1,6 +1,7 @@
 "use client";
 
 import { useTransition } from "react";
+import { useRouter } from "next/navigation";
 import { setProspectStatus } from "@/lib/admin-actions";
 import { useToast } from "@/components/admin/toast-provider";
 import type { ProspectStatus } from "@/lib/admin-types";
@@ -26,6 +27,7 @@ const LABEL: Record<ProspectStatus, string> = {
 };
 
 export function ProspectStatusButtons({ id, current }: { id: string; current: ProspectStatus }) {
+  const router = useRouter();
   const toast = useToast();
   const [pending, start] = useTransition();
   const next = NEXT[current] ?? [];
@@ -40,6 +42,7 @@ export function ProspectStatusButtons({ id, current }: { id: string; current: Pr
       try {
         await setProspectStatus(fd);
         toast.push(`Moved to ${LABEL[status]}`, "success");
+        router.refresh();
       } catch (e) {
         toast.push(e instanceof Error ? e.message : "Failed to update", "error");
       }

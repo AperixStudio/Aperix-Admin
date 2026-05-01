@@ -39,7 +39,9 @@ export function NewClientForm({ dataMode }: { dataMode: DataMode }) {
     if (mode !== "prospect" || !prospectState) return;
     if ("ok" in prospectState && prospectState.ok) {
       pushToast(`Prospect "${prospectState.businessName}" saved`, "success");
+      router.prefetch("/prospects");
       router.push(`/prospects`);
+      window.setTimeout(() => router.refresh(), 0);
     } else if (prospectState && !prospectState.ok && prospectState.error) {
       pushToast(prospectState.error, "error");
     }

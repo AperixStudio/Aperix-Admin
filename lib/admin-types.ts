@@ -18,6 +18,7 @@ export interface FilterRule {
 export type ViewKey =
   | "dashboard"
   | "client"
+  | "prospects"
   | "repo"
   | "onboarding"
   | "audit"
