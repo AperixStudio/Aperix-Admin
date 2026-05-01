@@ -11,6 +11,10 @@ import type { DataMode } from "@/lib/data-mode";
 import type { ChangelogEntry, NotificationItem } from "@/lib/admin-schemas";
 import type { IncidentNote, TaskItem } from "@/lib/admin-types";
 
+// Shared helper: blank form fields submit as "" — coerce to undefined so
+// the live adapter sees null instead of an empty string (prevents Postgres errors).
+const optStr = z.string().optional().transform((v) => v === "" ? undefined : v);
+
 // ── Tasks ────────────────────────────────────────────────────
 const TaskInput = z.object({
   projectId: z.string().min(1),
@@ -276,11 +280,6 @@ export async function createClient(_prev: unknown, formData: FormData) {
 }
 
 // ── Prospects (lead generation) ──────────────────────────────
-// Helper: blank form fields submit as "" — coerce them to undefined so
-// the live adapter sees null instead of an empty string (which would
-// cause a Postgres error on the `date` column, among others).
-const optStr = z.string().optional().transform((v) => v === "" ? undefined : v);
-
 const NewProspectInput = z.object({
   businessName: z.string().min(2),
   mapsUrl: optStr,
