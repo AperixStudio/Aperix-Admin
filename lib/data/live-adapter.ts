@@ -634,22 +634,24 @@ async function getProspect(id: string): Promise<ProspectRecord | null> {
 async function createProspect(input: NewProspectInput): Promise<ProspectRecord> {
   if (!isSupabaseAdminConfigured()) notConfigured();
   const supabase = getSupabaseAdmin();
+  // Normalise empty strings → null so Postgres date/text constraints don't choke.
+  const ns = (v: string | undefined | null) => (v == null || v === "" ? null : v);
   const insert = {
     business_name: input.businessName,
-    maps_url: input.mapsUrl ?? null,
-    current_site: input.currentSite ?? null,
-    notes: input.notes ?? null,
+    maps_url: ns(input.mapsUrl),
+    current_site: ns(input.currentSite),
+    notes: ns(input.notes),
     source: input.source ?? "google-maps",
     status: input.status ?? "new",
     priority: input.priority ?? "medium",
-    industry: input.industry ?? null,
-    location: input.location ?? null,
-    contact_name: input.contactName ?? null,
-    contact_email: input.contactEmail ?? null,
-    contact_phone: input.contactPhone ?? null,
-    owner: input.owner ?? "Harrison",
-    next_action: input.nextAction ?? null,
-    next_action_due: input.nextActionDue ?? null,
+    industry: ns(input.industry),
+    location: ns(input.location),
+    contact_name: ns(input.contactName),
+    contact_email: ns(input.contactEmail),
+    contact_phone: ns(input.contactPhone),
+    owner: input.owner || "Harrison",
+    next_action: ns(input.nextAction),
+    next_action_due: ns(input.nextActionDue),
     tags: input.tags ?? [],
   };
   const { data, error } = await supabase

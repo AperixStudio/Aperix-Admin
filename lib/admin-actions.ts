@@ -338,23 +338,28 @@ export async function createClient(_prev: unknown, formData: FormData) {
 }
 
 // ── Prospects (lead generation) ──────────────────────────────
+// Helper: blank form fields submit as "" — coerce them to undefined so
+// the live adapter sees null instead of an empty string (which would
+// cause a Postgres error on the `date` column, among others).
+const optStr = z.string().optional().transform((v) => v === "" ? undefined : v);
+
 const NewProspectInput = z.object({
   businessName: z.string().min(2),
-  mapsUrl: z.string().optional(),
-  currentSite: z.string().optional(),
-  notes: z.string().optional(),
+  mapsUrl: optStr,
+  currentSite: optStr,
+  notes: optStr,
   source: z.enum(["google-maps", "referral", "cold-list", "event", "inbound", "other"]).default("google-maps"),
   status: z.enum(["new", "researching", "contacted", "meeting", "won", "lost", "dormant"]).default("new"),
   priority: z.enum(["low", "medium", "high"]).default("medium"),
-  industry: z.string().optional(),
-  location: z.string().optional(),
-  contactName: z.string().optional(),
-  contactEmail: z.string().optional(),
-  contactPhone: z.string().optional(),
-  owner: z.string().optional(),
-  nextAction: z.string().optional(),
-  nextActionDue: z.string().optional(),
-  tags: z.string().optional(), // comma-separated
+  industry: optStr,
+  location: optStr,
+  contactName: optStr,
+  contactEmail: optStr,
+  contactPhone: optStr,
+  owner: optStr,
+  nextAction: optStr,
+  nextActionDue: optStr,
+  tags: optStr, // comma-separated
 });
 
 export async function createProspect(_prev: unknown, formData: FormData) {
