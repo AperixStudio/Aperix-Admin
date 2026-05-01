@@ -11,13 +11,15 @@ import {
   getProjectCompleteness,
   getRecentDeploys,
 } from "@/lib/admin-data";
+import { updateProject, appendToList, updateListItem, readList } from "@/lib/admin-store";
 import type {
   DataAdapter,
   DiagnosticReport,
   NewProjectInput,
   NewProspectInput,
 } from "@/lib/data/adapter";
-import type { ProspectRecord, ProspectStatus } from "@/lib/admin-types";
+import type { ProspectRecord, ProspectStatus, TaskItem, ContactRecord, CredentialReference, IncidentNote } from "@/lib/admin-types";
+import type { ChangelogEntry, NotificationItem } from "@/lib/admin-schemas";
 
 const PROSPECTS: ProspectRecord[] = [
   {
@@ -73,6 +75,66 @@ export const mockAdapter: DataAdapter = {
   },
   convertProspectToClient: async () => {
     throw new Error("Mock mode is read-only. Switch to Live to convert.");
+  },
+  createTask: async (projectId, input) => {
+    const id = `tsk_${Date.now().toString(36)}_${Math.random().toString(36).slice(2, 6)}`;
+    const task: TaskItem = { id, ...input };
+    await updateProject(projectId, (p) => ({ ...p, tasks: [task, ...(p.tasks ?? [])] }));
+    return task;
+  },
+  updateTaskStatus: async (projectId, taskId, status) => {
+    await updateProject(projectId, (p) => ({
+      ...p,
+      tasks: (p.tasks ?? []).map((t) => (t.id === taskId ? { ...t, status } : t)),
+    }));
+  },
+  createContact: async (projectId, input) => {
+    const id = `ctc_${Date.now().toString(36)}_${Math.random().toString(36).slice(2, 6)}`;
+    const contact: ContactRecord = { id, ...input };
+    await updateProject(projectId, (p) => ({ ...p, contacts: [contact, ...(p.contacts ?? [])] }));
+    return contact;
+  },
+  createCredential: async (projectId, input) => {
+    const id = `crd_${Date.now().toString(36)}_${Math.random().toString(36).slice(2, 6)}`;
+    const cred: CredentialReference = { id, ...input };
+    await updateProject(projectId, (p) => ({ ...p, credentials: [cred, ...(p.credentials ?? [])] }));
+    return cred;
+  },
+  createIncident: async (projectId, input) => {
+    const id = `inc_${Date.now().toString(36)}_${Math.random().toString(36).slice(2, 6)}`;
+    const inc: IncidentNote = { id, timestamp: new Date().toISOString(), ...input };
+    await updateProject(projectId, (p) => ({ ...p, incidents: [inc, ...(p.incidents ?? [])] }));
+    return inc;
+  },
+  advanceIncident: async (projectId, incidentId, toState, postmortem) => {
+    await updateProject(projectId, (p) => ({
+      ...p,
+      incidents: (p.incidents ?? []).map((i) => {
+        if (i.id !== incidentId) return i;
+        return {
+          ...i,
+          state: toState,
+          severity: toState === "resolved" || toState === "postmortem" ? "resolved" : i.severity,
+          resolvedAt: toState === "resolved" ? new Date().toISOString() : i.resolvedAt,
+          postmortem: postmortem ?? i.postmortem,
+        };
+      }),
+    }));
+  },
+  markNotificationRead: async (id) => {
+    await updateListItem<NotificationItem>("notifications.json", id, (n) => ({ ...n, read: true }));
+  },
+  markAllNotificationsRead: async () => {
+    const list = await readList<NotificationItem>("notifications.json");
+    for (const n of list) {
+      if (!n.read) await updateListItem<NotificationItem>("notifications.json", n.id, (x) => ({ ...x, read: true }));
+    }
+  },
+  postChangelog: async (input) => {
+    const id = `chg_${Date.now().toString(36)}_${Math.random().toString(36).slice(2, 6)}`;
+    const entry: ChangelogEntry = { id, date: new Date().toISOString(), ...input };
+    await appendToList<ChangelogEntry>("changelog.json", entry);
+    return entry;
   },
   runDiagnostics: async (): Promise<DiagnosticReport> => ({
     generatedAt: new Date().toISOString(),

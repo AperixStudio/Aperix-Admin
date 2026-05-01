@@ -9,8 +9,12 @@ import type {
   ProspectRecord,
   ProspectStatus,
   ProspectSource,
+  TaskItem,
+  ContactRecord,
+  CredentialReference,
+  IncidentNote,
 } from "@/lib/admin-types";
-import type { ContractRecord, RunbookEntry, NotificationItem } from "@/lib/admin-schemas";
+import type { ChangelogEntry, ContractRecord, RunbookEntry, NotificationItem } from "@/lib/admin-schemas";
 
 export type RecentDeploy = DeploymentRecord & { projectId: string; projectName: string };
 
@@ -56,6 +60,19 @@ export interface DataAdapter {
   createProspect(input: NewProspectInput): Promise<ProspectRecord>;
   updateProspectStatus(id: string, status: ProspectStatus): Promise<void>;
   convertProspectToClient(id: string, project: NewProjectInput): Promise<ProjectRecord>;
+
+  // Sub-entity mutations — live writes to Supabase; mock/empty write to JSON files.
+  createTask(projectId: string, input: Omit<TaskItem, "id">): Promise<TaskItem>;
+  updateTaskStatus(projectId: string, taskId: string, status: TaskItem["status"]): Promise<void>;
+  createContact(projectId: string, input: Omit<ContactRecord, "id">): Promise<ContactRecord>;
+  createCredential(projectId: string, input: Omit<CredentialReference, "id">): Promise<CredentialReference>;
+  createIncident(projectId: string, input: Omit<IncidentNote, "id" | "timestamp">): Promise<IncidentNote>;
+  advanceIncident(projectId: string, incidentId: string, toState: NonNullable<IncidentNote["state"]>, postmortem?: string): Promise<void>;
+
+  // Notification + changelog mutations
+  markNotificationRead(id: string): Promise<void>;
+  markAllNotificationsRead(): Promise<void>;
+  postChangelog(input: Omit<ChangelogEntry, "id" | "date">): Promise<ChangelogEntry>;
 
   // Diagnostics — used by Settings → Diagnostics. Each row reports
   // whether a logical resource is reachable. Implementation differs

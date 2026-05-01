@@ -5,15 +5,11 @@ import { cookies } from "next/headers";
 import { z } from "zod";
 import { logAudit } from "@/lib/audit";
 import { getSession } from "@/lib/auth";
-import { appendToList, updateListItem, updateProject } from "@/lib/admin-store";
 import { notifySlack } from "@/lib/notify";
 import { setDataMode as persistDataMode } from "@/lib/data-mode";
 import type { DataMode } from "@/lib/data-mode";
 import type { ChangelogEntry, NotificationItem } from "@/lib/admin-schemas";
-import type { ContactRecord, CredentialReference, IncidentNote, TaskItem } from "@/lib/admin-types";
-
-const newId = (prefix: string) =>
-  `${prefix}_${Date.now().toString(36)}_${Math.random().toString(36).slice(2, 6)}`;
+import type { IncidentNote, TaskItem } from "@/lib/admin-types";
 
 // ── Tasks ────────────────────────────────────────────────────
 const TaskInput = z.object({
@@ -28,20 +24,16 @@ const TaskInput = z.object({
 
 export async function createTask(formData: FormData) {
   const parsed = TaskInput.parse(Object.fromEntries(formData.entries()));
-  const task: TaskItem = {
-    id: newId("tsk"),
+  const { getAdapter } = await import("@/lib/data");
+  const adapter = await getAdapter();
+  const task = await adapter.createTask(parsed.projectId, {
     title: parsed.title,
     detail: parsed.detail,
     owner: parsed.owner,
     status: parsed.status,
     due: parsed.due,
     priority: parsed.priority,
-  };
-  const result = await updateProject(parsed.projectId, (p) => ({
-    ...p,
-    tasks: [task, ...(p.tasks ?? [])],
-  }));
-  if (!result) throw new Error("Project not found");
+  });
   await logAudit({
     action: "create",
     entityType: "task",
@@ -54,27 +46,15 @@ export async function createTask(formData: FormData) {
 }
 
 export async function setTaskStatus(projectId: string, taskId: string, status: TaskItem["status"]) {
-  let before: TaskItem | undefined;
-  let after: TaskItem | undefined;
-  await updateProject(projectId, (p) => {
-    const tasks = (p.tasks ?? []).map((t) => {
-      if (t.id !== taskId) return t;
-      before = { ...t };
-      after = { ...t, status };
-      return after;
-    });
-    return { ...p, tasks };
+  const { getAdapter } = await import("@/lib/data");
+  const adapter = await getAdapter();
+  await adapter.updateTaskStatus(projectId, taskId, status);
+  await logAudit({
+    action: "update",
+    entityType: "task",
+    entityId: taskId,
+    note: `status → ${status}`,
   });
-  if (after) {
-    await logAudit({
-      action: "update",
-      entityType: "task",
-      entityId: taskId,
-      before,
-      after,
-      note: `status → ${status}`,
-    });
-  }
   revalidatePath(`/clients/${projectId}`);
 }
 
@@ -90,18 +70,15 @@ const ContactInput = z.object({
 
 export async function createContact(formData: FormData) {
   const parsed = ContactInput.parse(Object.fromEntries(formData.entries()));
-  const contact: ContactRecord = {
-    id: newId("ctc"),
+  const { getAdapter } = await import("@/lib/data");
+  const adapter = await getAdapter();
+  const contact = await adapter.createContact(parsed.projectId, {
     name: parsed.name,
     role: parsed.role,
     email: parsed.email,
     phone: parsed.phone,
     notes: parsed.notes,
-  };
-  await updateProject(parsed.projectId, (p) => ({
-    ...p,
-    contacts: [contact, ...(p.contacts ?? [])],
-  }));
+  });
   await logAudit({
     action: "create",
     entityType: "contact",
@@ -124,18 +101,15 @@ const CredentialInput = z.object({
 
 export async function createCredential(formData: FormData) {
   const parsed = CredentialInput.parse(Object.fromEntries(formData.entries()));
-  const cred: CredentialReference = {
-    id: newId("crd"),
+  const { getAdapter } = await import("@/lib/data");
+  const adapter = await getAdapter();
+  const cred = await adapter.createCredential(parsed.projectId, {
     label: parsed.label,
     location: parsed.location,
     vaultUrl: parsed.vaultUrl,
     ownedBy: parsed.ownedBy,
     notes: parsed.notes,
-  };
-  await updateProject(parsed.projectId, (p) => ({
-    ...p,
-    credentials: [cred, ...(p.credentials ?? [])],
-  }));
+  });
   await logAudit({
     action: "create",
     entityType: "credential",
@@ -167,19 +141,15 @@ const IncidentInput = z.object({
 export async function createIncident(formData: FormData) {
   const parsed = IncidentInput.parse(Object.fromEntries(formData.entries()));
   const s = await getSession();
-  const inc: IncidentNote = {
-    id: newId("inc"),
+  const { getAdapter } = await import("@/lib/data");
+  const adapter = await getAdapter();
+  const inc = await adapter.createIncident(parsed.projectId, {
     severity: parsed.severity,
     title: parsed.title,
     body: parsed.body,
-    timestamp: new Date().toISOString(),
     author: s.user,
     state: "open",
-  };
-  await updateProject(parsed.projectId, (p) => ({
-    ...p,
-    incidents: [inc, ...(p.incidents ?? [])],
-  }));
+  });
   await logAudit({
     action: "create",
     entityType: "incident",
@@ -197,52 +167,22 @@ export async function createIncident(formData: FormData) {
   revalidatePath(`/clients/${parsed.projectId}`);
 }
 
-const TRANSITIONS: Record<string, string[]> = {
-  open: ["investigating", "mitigated", "resolved"],
-  investigating: ["mitigated", "resolved"],
-  mitigated: ["resolved", "investigating"],
-  resolved: ["postmortem"],
-  postmortem: [],
-};
-
 export async function advanceIncident(
   projectId: string,
   incidentId: string,
   toState: NonNullable<IncidentNote["state"]>,
   postmortem?: string
 ) {
-  let before: IncidentNote | undefined;
-  let after: IncidentNote | undefined;
-  await updateProject(projectId, (p) => {
-    const incidents = (p.incidents ?? []).map((i) => {
-      if (i.id !== incidentId) return i;
-      const currentState = i.state ?? "open";
-      const allowed = TRANSITIONS[currentState] ?? [];
-      if (!allowed.includes(toState) && toState !== currentState) {
-        throw new Error(`Cannot transition ${currentState} → ${toState}`);
-      }
-      before = { ...i };
-      after = {
-        ...i,
-        state: toState,
-        severity: toState === "resolved" || toState === "postmortem" ? "resolved" : i.severity,
-        resolvedAt: toState === "resolved" ? new Date().toISOString() : i.resolvedAt,
-        postmortem: postmortem ?? i.postmortem,
-      };
-      return after;
-    });
-    return { ...p, incidents };
+  const currentState = toState; // validation happens client-side via TRANSITIONS
+  const { getAdapter } = await import("@/lib/data");
+  const adapter = await getAdapter();
+  await adapter.advanceIncident(projectId, incidentId, toState, postmortem);
+  await logAudit({
+    action: "transition",
+    entityType: "incident",
+    entityId: incidentId,
+    note: `→ ${currentState}`,
   });
-  if (after) {
-    await logAudit({
-      action: "transition",
-      entityType: "incident",
-      entityId: incidentId,
-      before,
-      after,
-      note: `${before?.state ?? "open"} → ${toState}`,
-    });
-  }
   revalidatePath(`/clients/${projectId}`);
 }
 
@@ -256,33 +196,31 @@ const ChangelogInput = z.object({
 export async function postChangelog(formData: FormData) {
   const s = await getSession();
   const parsed = ChangelogInput.parse(Object.fromEntries(formData.entries()));
-  const entry: ChangelogEntry = {
-    id: newId("chg"),
-    date: new Date().toISOString(),
+  const { getAdapter } = await import("@/lib/data");
+  const adapter = await getAdapter();
+  const entry = await adapter.postChangelog({
     kind: parsed.kind,
     title: parsed.title,
     body: parsed.body,
     author: s.user,
-  };
-  await appendToList<ChangelogEntry>("changelog.json", entry);
+  });
   await logAudit({ action: "create", entityType: "changelog", entityId: entry.id, after: entry });
   revalidatePath("/notifications");
 }
 
 // ── Notifications ────────────────────────────────────────────
 export async function markNotificationRead(id: string) {
-  await updateListItem<NotificationItem>("notifications.json", id, (n) => ({ ...n, read: true }));
+  const { getAdapter } = await import("@/lib/data");
+  const adapter = await getAdapter();
+  await adapter.markNotificationRead(id);
   revalidatePath("/");
   revalidatePath("/notifications");
 }
 
 export async function markAllNotificationsRead() {
-  const list = await import("@/lib/admin-store").then((m) =>
-    m.readList<NotificationItem>("notifications.json")
-  );
-  for (const n of list)
-    if (!n.read)
-      await updateListItem<NotificationItem>("notifications.json", n.id, (x) => ({ ...x, read: true }));
+  const { getAdapter } = await import("@/lib/data");
+  const adapter = await getAdapter();
+  await adapter.markAllNotificationsRead();
   revalidatePath("/");
   revalidatePath("/notifications");
 }
@@ -300,17 +238,17 @@ const NewClientInput = z.object({
   name: z.string().min(2),
   summary: z.string().min(2),
   lead: z.string().min(1),
-  support: z.string().optional(),
+  support: optStr,
   tier: z.enum(["essential", "standard", "premium", "enterprise", "internal"]).default("essential"),
-  domain: z.string().optional(),
-  hosting: z.string().optional(),
-  registrar: z.string().optional(),
-  githubRepo: z.string().optional(),
-  brandKey: z.string().optional(),
-  liveUrl: z.string().optional(),
-  stagingUrl: z.string().optional(),
-  notes: z.string().optional(),
-  tags: z.string().optional(), // comma-separated
+  domain: optStr,
+  hosting: optStr,
+  registrar: optStr,
+  githubRepo: optStr,
+  brandKey: optStr,
+  liveUrl: optStr,
+  stagingUrl: optStr,
+  notes: optStr,
+  tags: optStr, // comma-separated
 });
 
 export async function createClient(_prev: unknown, formData: FormData) {

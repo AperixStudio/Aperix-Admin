@@ -528,14 +528,14 @@ async function createProject(input: NewProjectInput): Promise<ProjectRecord> {
     lead: input.lead,
     support: input.support ?? "",
     tier: input.tier,
-    domain: input.domain ?? null,
-    hosting: input.hosting ?? null,
-    registrar: input.registrar ?? null,
-    repo: input.githubRepo ?? null,
+    domain: ns(input.domain),
+    hosting: ns(input.hosting),
+    registrar: ns(input.registrar),
+    repo: ns(input.githubRepo),
     repo_url: input.githubRepo ? `https://github.com/${input.githubRepo}` : null,
-    live_url: input.liveUrl ?? null,
-    staging_url: input.stagingUrl ?? null,
-    brand_key: input.brandKey ?? null,
+    live_url: ns(input.liveUrl),
+    staging_url: ns(input.stagingUrl),
+    brand_key: ns(input.brandKey),
     tags: input.tags ?? [],
   };
 
@@ -685,6 +685,163 @@ async function convertProspectToClient(id: string, project: NewProjectInput): Pr
 }
 
 // -------------------------------------------------------------
+// Sub-entity mutations (tasks, contacts, credentials, incidents)
+// -------------------------------------------------------------
+
+// Shared null-safe helper for empty strings throughout mutations.
+const ns = (v: string | undefined | null) => (v == null || v === "" ? null : v);
+
+async function createTask(projectId: string, input: Omit<TaskItem, "id">): Promise<TaskItem> {
+  if (!isSupabaseAdminConfigured()) notConfigured();
+  const supabase = getSupabaseAdmin();
+  const { data, error } = await supabase
+    .from("tasks")
+    .insert({
+      project_id: projectId,
+      title: input.title,
+      detail: ns(input.detail),
+      owner: input.owner,
+      status: input.status ?? "open",
+      priority: input.priority ?? "medium",
+      due: ns(input.due),
+    })
+    .select("*")
+    .single();
+  if (error) throw new Error(`createTask: ${error.message}`);
+  return mapTask(data as TaskRow);
+}
+
+async function updateTaskStatus(projectId: string, taskId: string, status: TaskItem["status"]): Promise<void> {
+  if (!isSupabaseAdminConfigured()) notConfigured();
+  const supabase = getSupabaseAdmin();
+  const { error } = await supabase
+    .from("tasks")
+    .update({ status })
+    .eq("id", taskId)
+    .eq("project_id", projectId);
+  if (error) throw new Error(`updateTaskStatus: ${error.message}`);
+}
+
+async function createContact(projectId: string, input: Omit<ContactRecord, "id">): Promise<ContactRecord> {
+  if (!isSupabaseAdminConfigured()) notConfigured();
+  const supabase = getSupabaseAdmin();
+  const { data, error } = await supabase
+    .from("contacts")
+    .insert({
+      project_id: projectId,
+      name: input.name,
+      role: input.role,
+      email: ns(input.email),
+      phone: ns(input.phone),
+      notes: ns(input.notes),
+    })
+    .select("*")
+    .single();
+  if (error) throw new Error(`createContact: ${error.message}`);
+  return mapContact(data as ContactRow);
+}
+
+async function createCredential(projectId: string, input: Omit<CredentialReference, "id">): Promise<CredentialReference> {
+  if (!isSupabaseAdminConfigured()) notConfigured();
+  const supabase = getSupabaseAdmin();
+  const { data, error } = await supabase
+    .from("credentials")
+    .insert({
+      project_id: projectId,
+      label: input.label,
+      location: input.location,
+      vault_url: ns(input.vaultUrl),
+      owned_by: input.ownedBy,
+      notes: ns(input.notes),
+    })
+    .select("*")
+    .single();
+  if (error) throw new Error(`createCredential: ${error.message}`);
+  return mapCredential(data as CredentialRow);
+}
+
+async function createIncident(projectId: string, input: Omit<IncidentNote, "id" | "timestamp">): Promise<IncidentNote> {
+  if (!isSupabaseAdminConfigured()) notConfigured();
+  const supabase = getSupabaseAdmin();
+  const { data, error } = await supabase
+    .from("incidents")
+    .insert({
+      project_id: projectId,
+      title: input.title,
+      body: input.body,
+      severity: input.severity,
+      state: input.state ?? "open",
+      author: input.author,
+    })
+    .select("*")
+    .single();
+  if (error) throw new Error(`createIncident: ${error.message}`);
+  return mapIncident(data as IncidentRow);
+}
+
+async function advanceIncident(
+  projectId: string,
+  incidentId: string,
+  toState: NonNullable<IncidentNote["state"]>,
+  postmortem?: string
+): Promise<void> {
+  if (!isSupabaseAdminConfigured()) notConfigured();
+  const supabase = getSupabaseAdmin();
+  const patch: Record<string, unknown> = { state: toState };
+  if (toState === "resolved" || toState === "postmortem") patch.severity = "resolved";
+  if (toState === "resolved") patch.resolved_at = new Date().toISOString();
+  if (postmortem) patch.postmortem = postmortem;
+  const { error } = await supabase
+    .from("incidents")
+    .update(patch)
+    .eq("id", incidentId)
+    .eq("project_id", projectId);
+  if (error) throw new Error(`advanceIncident: ${error.message}`);
+}
+
+async function markNotificationRead(id: string): Promise<void> {
+  if (!isSupabaseAdminConfigured()) notConfigured();
+  const supabase = getSupabaseAdmin();
+  const { error } = await supabase.from("notifications").update({ read: true }).eq("id", id);
+  if (error) throw new Error(`markNotificationRead: ${error.message}`);
+}
+
+async function markAllNotificationsRead(): Promise<void> {
+  if (!isSupabaseAdminConfigured()) notConfigured();
+  const supabase = getSupabaseAdmin();
+  const { error } = await supabase.from("notifications").update({ read: true }).eq("read", false);
+  if (error) throw new Error(`markAllNotificationsRead: ${error.message}`);
+}
+
+async function postChangelog(input: Omit<import("@/lib/admin-schemas").ChangelogEntry, "id" | "date">): Promise<import("@/lib/admin-schemas").ChangelogEntry> {
+  if (!isSupabaseAdminConfigured()) notConfigured();
+  const supabase = getSupabaseAdmin();
+  const { data, error } = await supabase
+    .from("changelog")
+    .insert({ kind: input.kind, title: input.title, body: input.body, author: input.author })
+    .select("*")
+    .single();
+  if (error) throw new Error(`postChangelog: ${error.message}`);
+  // Also push to notifications so the bell + /notifications page reflects it.
+  await supabase.from("notifications").insert({
+    kind: "changelog",
+    title: input.title,
+    body: input.body,
+    href: "/notifications?kind=changelog",
+  });
+  type Row = { id: string; posted_at: string; kind: string; title: string; body: string; author: string };
+  const row = data as Row;
+  return {
+    id: row.id,
+    date: row.posted_at,
+    kind: row.kind as import("@/lib/admin-schemas").ChangelogEntry["kind"],
+    title: row.title,
+    body: row.body,
+    author: row.author,
+  };
+}
+
+// -------------------------------------------------------------
 // Diagnostics
 // -------------------------------------------------------------
 
@@ -805,5 +962,14 @@ export const liveAdapter: DataAdapter = {
   createProspect,
   updateProspectStatus,
   convertProspectToClient,
+  createTask,
+  updateTaskStatus,
+  createContact,
+  createCredential,
+  createIncident,
+  advanceIncident,
+  markNotificationRead,
+  markAllNotificationsRead,
+  postChangelog,
   runDiagnostics,
 };

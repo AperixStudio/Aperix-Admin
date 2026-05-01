@@ -33,6 +33,15 @@ export const emptyAdapter: DataAdapter = {
   convertProspectToClient: async () => {
     throw new Error("Empty mode is read-only.");
   },
+  createTask: async () => { throw new Error("Empty mode is read-only."); },
+  updateTaskStatus: async () => { throw new Error("Empty mode is read-only."); },
+  createContact: async () => { throw new Error("Empty mode is read-only."); },
+  createCredential: async () => { throw new Error("Empty mode is read-only."); },
+  createIncident: async () => { throw new Error("Empty mode is read-only."); },
+  advanceIncident: async () => { throw new Error("Empty mode is read-only."); },
+  markNotificationRead: async () => { /* no-op — nothing to mark in empty mode */ },
+  markAllNotificationsRead: async () => { /* no-op */ },
+  postChangelog: async () => { throw new Error("Empty mode is read-only."); },
   runDiagnostics: async (): Promise<DiagnosticReport> => ({
     generatedAt: new Date().toISOString(),
     mode: "empty",
